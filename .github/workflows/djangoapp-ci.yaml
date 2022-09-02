@@ -1,0 +1,92 @@
+# This workflow will install Python dependencies, run tests, lint
+# with a single version of Python (python 3.10)
+# then deploy to a remote server using SSH
+# The project folder and the apps folders must be in a folder named "src"
+# src/my_project and src/app_of_my_project
+name: Automatically Testing the Django Application
+
+# On push or pull_request on branch main
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  # Build the app ===================
+  test_then_deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - run: |
+        git fetch --prune --unshallow
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8 pytest
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    # Lint the app with flake8 ===================
+    - name: Lint with flake8
+      run: |
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    # Test the app with pytest ===================
+    - name: Test with pytest
+      run: |
+        pip install pytest-django
+        export PYTHONPATH=src
+        python -m pytest
+    # Deploy to server ===================
+    - name: Very first time deploying to server with ssh
+      continue-on-error: true
+      env:
+        SSH_KEY_PRIVATE: ${{ secrets.SSH_KEY_PRIVATE }}
+        USERNAME: ${{ secrets.USERNAME }}
+        IP_ADDRESS: ${{ secrets.IP_ADDRESS }}
+        USER_PASSWORD: ${{ secrets.USER_PASSWORD }}
+        REPOSITORY_ADDRESS: ${{ secrets.REPOSITORY_ADDRESS }}
+        PROJECT_FOLDER: ${{ secrets.PROJECT_FOLDER }}
+      if: github.ref == 'refs/heads/main' && job.status == 'success'
+      run: |
+        cd ..
+        cd ..
+        cd ..
+        mkdir .ssh
+        cd .ssh
+        touch id_rsa
+        touch known_hosts
+        eval `ssh-agent -s`
+        echo "$SSH_KEY_PRIVATE" > id_rsa
+        chmod 400 id_rsa
+        ssh-add id_rsa
+        ssh-keyscan -H 142.93.142.2 >> known_hosts
+        ssh-add -l
+        cd ..
+        ssh -i .ssh/id_rsa ${{ secrets.USERNAME }}@${{ secrets.IP_ADDRESS }} "git clone ${{ secrets.REPOSITORY_ADDRESS }}"
+    - name: Deploying to server with ssh then reloading supervisor (It's not the first deployment)
+      if: github.ref == 'refs/heads/main' && job.status == 'success'
+      run: |
+        cd ..
+        cd ..
+        cd ..
+        ssh -i .ssh/id_rsa ${{ secrets.USERNAME }}@${{ secrets.IP_ADDRESS }} "cd ${{ secrets.PROJECT_FOLDER }}; git pull"
+        ssh -i .ssh/id_rsa ${{ secrets.USERNAME }}@${{ secrets.IP_ADDRESS }} "echo '${{ secrets.USER_PASSWORD }}' | sudo -S supervisorctl stop all"
+        ssh -i .ssh/id_rsa ${{ secrets.USERNAME }}@${{ secrets.IP_ADDRESS }} "echo '${{ secrets.USER_PASSWORD }}' | sudo -S supervisorctl reload"
+
+# SSH_KEY_PRIVATE est la clef ssh privée en local (id_rsa)
+# USERNAME est le nom qui permet d'accéder au server distant (ex: julie@123.42.123.3)
+# IP_ADDRESS est l'adresse ip du server distant (ex: julie@123.42.123.3)
+# USER_PASSWORD est le mot de passe sudo du serveur distant
+# REPOSITORY_ADDRESS est l'adresse github du projet (ex: https://github.com/tamarincity/mon_projet.git)
+# PROJECT_FOLDER est le dossier dans lequel est cloné le projet
