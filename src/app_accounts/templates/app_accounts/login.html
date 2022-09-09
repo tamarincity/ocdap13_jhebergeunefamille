@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<br />
+<br />
+
+<!-- login-->
+<section class="page-section" id="login">
+    <div class="container px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-lg-8 col-xl-6 text-center">
+                <h2 class="mt-0">Connexion</h2>
+                <hr class="divider" />
+                <p class="text-muted mb-5">Profitez de toutes les fonctionnalités !</p>
+            </div>
+        </div>
+        <div class="row gx-4 gx-lg-5 justify-content-center mb-5">
+            <div class="col-lg-6">
+                
+                <form id="loginForm" method="post" action="#" > <!-- action="#" => same file -->
+                    {% csrf_token %}
+                    <!-- Email address input-->
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="username" type="email" placeholder="un@exemple.com" name="username" required />
+                        <label for="email">Email address</label>
+                    </div>
+                    <!-- Password input-->
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="password" type="password" placeholder="Mot de passe" name="password" required />
+                        <label for="password">Mot de passe</label>
+                    </div>
+
+                    {% if messages %}
+                        <div class="alert alert-danger" role="alert">
+                            {% for message in messages %}
+                                {{ message }}
+                            {% endfor %}
+                        </div>
+                            
+                    {% else %}
+                        <div class="alert alert-light" role="alert" style="visibility: hidden">
+                            No message to display            
+                        </div>
+
+                        
+                    {% endif%}
+                    <!-- Submit Button-->
+                    <div class="d-grid"><button class="btn btn-primary btn-xl" id="submitButton" type="submit">Valider</button></div>
+                    <div class="row gx-4 gx-lg-5 justify-content-center">
+                        <div class="col-lg-8 col-xl-6 text-center">
+                            <a class="nav-link primary-dark" id="login" href="{% url 'accounts_forgoten_pswd' %}">
+                                Mot de passe oublié
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
