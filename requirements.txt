@@ -2,6 +2,7 @@ black==22.6.0
 django==4.1
 django-environ==0.9.0
 flake8==5.0.4
+icecream
 psycopg2-binary==2.9.3
 pytest-cov==3.0.0
 pytest-django==4.5.2

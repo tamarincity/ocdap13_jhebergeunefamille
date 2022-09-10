@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
 from functools import total_ordering
+from pprint import pprint
+import time
 
 import pytest
 
@@ -46,6 +48,21 @@ class MockRequest:
             self.POST: dict = credentials
         if self.method == 'POST_OTP_N_PSWD':
             self.POST: dict = otp_n_pswd
+
+
+@pytest.fixture
+def add_member_to_db():
+    return Member.objects.create_user(
+                username=credentials["username"],
+                password=credentials["password"],
+                email=credentials["username"])
+
+
+@pytest.fixture
+def get_user_credentials():
+    return {"username": credentials["username"],
+            "password": credentials["password"],
+            "email": credentials["username"]}
 
 
 def test_get_credentials():
@@ -111,3 +128,35 @@ def test_logout_user(monkeypatch):
 
     print("     should display the link 'Connexion'")
     assert "Connexion" in str(response.content)
+
+
+@pytest.mark.test_me
+@pytest.mark.integration_test
+def test_profile(add_member_to_db):
+
+    unregistered_user = {"first_name": "John", "is_submit_button_clicked": True}
+
+    print("If the user is not registered, should redirect to the home page")
+    response = client.post('/accounts_profile',
+                           unregistered_user,
+                           follow=True)
+    assert "Je recherche un logement pour" in str(response.content)
+
+    # Create a registered user
+    user = add_member_to_db  # Fixture
+
+    registered_user = {"first_name": "Jhon",
+              "is_submit_button_clicked": True}
+
+    print("If the registered user modify his account via the form then")
+    print("     should alert 'Votre compte a bien été mis à jour'")
+    client.force_login(user)  # Log the user in
+    response = client.post('/accounts_profile', registered_user)
+    assert ("alert" in str(response.content)
+                and "Votre compte a bien " in str(response.content)
+                and "mis " in str(response.content)
+                and "jour" in str(response.content))
+
+    print("     should update the user account in the database")
+    member = Member.objects.get(username=credentials["username"])
+    assert member.first_name == registered_user["first_name"]
