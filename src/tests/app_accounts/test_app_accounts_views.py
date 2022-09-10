@@ -146,7 +146,7 @@ def test_profile(add_member_to_db):
     user = add_member_to_db  # Fixture
 
     registered_user = {"first_name": "Jhon",
-              "is_submit_button_clicked": True}
+                        "is_submit_button_clicked": True}
 
     print("If the registered user modify his account via the form then")
     print("     should alert 'Votre compte a bien été mis à jour'")
