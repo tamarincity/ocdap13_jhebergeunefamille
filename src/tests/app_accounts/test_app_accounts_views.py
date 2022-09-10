@@ -93,3 +93,21 @@ def test_login_user(monkeypatch):
                             "password": credentials["password"]}, follow=True)
 
     assert (response.redirect_chain[0][0] == "/")  # redirect_chain = [('/', 302)]
+
+
+@pytest.mark.integration_test
+def test_logout_user(monkeypatch):
+
+    def mock_logout(request):
+        pass
+
+    monkeypatch.setattr("app_accounts.views.logout", mock_logout)
+
+    print("If logout is clicked then ")
+    print("     should redirect to the home page")
+    # follow=True allows to follow redirection
+    response = client.get('/accounts_logout', follow=True)
+    assert (response.redirect_chain[0][0] == "/")  # redirect_chain = [('/', 302)]
+
+    print("     should display the link 'Connexion'")
+    assert "Connexion" in str(response.content)
