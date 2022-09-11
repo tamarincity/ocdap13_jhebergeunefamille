@@ -17,6 +17,10 @@ urlpatterns = [
     path('logout', views.logout_user, name='accounts_logout'),
     # route for the user to sign up
     path('signup', views.signup_user, name='accounts_signup'),
+    # route for the user to complete the registration
+    path('complete_the_registration',
+         views.complete_the_registration,
+         name='accounts_complete_the_registration'),
     # route for the user in need to get the list of cities that have available rooms
     path('cities', views.get_all_cities_with_available_rooms, name='accounts_cities'),
 ]

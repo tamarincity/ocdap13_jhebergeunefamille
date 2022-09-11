@@ -147,6 +147,14 @@ USE_I18N = True
 USE_TZ = True
 
 
+# email settings
+EMAIL_HOST_USER = env("EMAIL_HOST_USER", default=None)
+EMAIL_HOST_PASSWORD = env("APP_PASSWORD", default=None)
+EMAIL_HOST = env("EMAIL_HOST", default=None)
+EMAIL_PORT = env("EMAIL_PORT", default=None)
+EMAIL_USE_TLS = env("EMAIL_USE_TLS", default=None)
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 

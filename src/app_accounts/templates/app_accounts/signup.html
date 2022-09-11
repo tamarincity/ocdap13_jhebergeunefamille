@@ -1,7 +1,65 @@
 {% extends 'base.html' %}
 
+
 {% block content %}
 
-Signup is coming soon!
+<br/>
+<br/>
+<!-- signup-->
+<section class="page-section" id="signup">
+    <div class="container px-4 px-lg-5">
+
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-lg-8 col-xl-6 text-center">
+                <h2 class="mt-0">S'inscrire</h2>
+                <hr class="divider" />
+                <p class="text-muted mb-5">Prêt à profiter de toutes les fonctionnalités ?<br/>C'est par ici</p>
+            </div>
+        </div>
+
+
+        <div class="row gx-4 gx-lg-5 justify-content-center mb-5">
+            <div class="col-lg-6">
+
+                <form id="signupForm" method="post" action="#" >
+                    {% csrf_token %}
+                    <!-- Email address input-->
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="username" type="email" placeholder="un@exemple.com" name="username" required />
+                        <label for="email">Email address</label>
+                    </div>
+
+                    {% if messages %}
+                        <div class="alert alert-danger" role="alert">
+                            {% for message in messages %}
+                                {{ message }}
+                            {% endfor %}
+                        </div>
+
+                    {% else %}
+                        <div class="alert alert-light" role="alert" style="visibility: hidden">
+                            No message to display
+                        </div>
+
+
+                    {% endif%}
+                    <!-- Submit Button-->
+                    <div class="d-grid"><button class="btn btn-primary btn-xl" id="submitButton" type="submit">Valider</button></div>
+
+                    <div class="row gx-4 gx-lg-5 justify-content-center">
+                        <div class="col-lg-8 col-xl-6 text-center">
+                            <a class="nav-link caramel-mou" id="login" href="{% url 'accounts_forgoten_pswd' %}">
+                                Mot de passe oublié
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+
 
 {% endblock %}

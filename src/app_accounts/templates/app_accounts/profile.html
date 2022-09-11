@@ -28,20 +28,25 @@
         <div class="col-lg-6">
             <form id="profile-form" method="post" action="#" >
                 {% csrf_token %}
+                <!-- Pseudo input (not editable)-->
+                <div class="form-floating mb-3">
+                    <input readonly class="form-control" id="pseudo" type="text" placeholder="Pseudo" name="pseudo" value="{{ member.pseudo }}" required />
+                    <label for="pseudo">Pseudo (not editable)</label>
+                </div>
                 <!-- First name input-->
                 <div class="form-floating mb-3">
-                    <input class="form-control" id="first_name" type="text" placeholder="First Name" name="first_name" value="{{ member.first_name }}" />
-                    <label for="email">Prénom</label>
+                    <input class="form-control" id="first_name" type="text" placeholder="First Name" name="first_name" value="{{ member.first_name }}" required />
+                    <label for="first_name">Prénom</label>
                 </div>
                 <!-- Last name input-->
                 <div class="form-floating mb-3">
                     <input class="form-control" id="last_name" type="text" placeholder="last name" name="last_name" value="{{ member.last_name }}" />
-                    <label for="password">Nom de famille</label>
+                    <label for="last_name">Nom de famille</label>
                 </div>
                 <!-- Email input-->
                 <div class="form-floating mb-3">
                     <input readonly class="form-control" id="email" type="text" name="email" value="{{ member.email }}" />
-                    <label for="password">Email (not editable)</label>
+                    <label for="email">Email (not editable)</label>
                 </div>
 
                 <!-- Username -->

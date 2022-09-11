@@ -12,7 +12,7 @@ from app_accounts.models import Member
 from app_accounts.views import (
     _get_credentials,
     # _get_otp_n_pswd_from_request,
-    # check_mail_validity,
+    # check_email_validity,
     # create_otp,
 )
 from app_accounts.constants import OTP_VALIDITY_DURATION_IN_MINUTE
@@ -26,7 +26,7 @@ pytestmark = pytest.mark.django_db
 credentials = {
                 "username": "toto@email.fr",
                 "first_name": "Toto",
-                "last_name": "Toto",
+                "last_name": "DUPONT",
                 "email": "toto@email.fr",
                 "password": "12345678",
                 "is_submit_button_clicked": "yes"}
@@ -54,6 +54,7 @@ class MockRequest:
 def add_member_to_db():
     return Member.objects.create_user(
                 username=credentials["username"],
+                first_name=credentials["first_name"],
                 password=credentials["password"],
                 email=credentials["username"])
 
@@ -134,7 +135,7 @@ def test_logout_user(monkeypatch):
 @pytest.mark.integration_test
 def test_profile(add_member_to_db):
 
-    unregistered_user = {"first_name": "John", "is_submit_button_clicked": True}
+    unregistered_user = {"first_name": "Jane", "is_submit_button_clicked": True}
 
     print("If the user is not registered, should redirect to the home page")
     response = client.post('/accounts_profile',
@@ -145,13 +146,12 @@ def test_profile(add_member_to_db):
     # Create a registered user
     user = add_member_to_db  # Fixture
 
-    registered_user = {"first_name": "Jhon",
-                        "is_submit_button_clicked": True}
-
     print("If the registered user modify his account via the form then")
     print("     should alert 'Votre compte a bien été mis à jour'")
+    data_from_form = {"first_name": "Jhon",
+                        "is_submit_button_clicked": True}
     client.force_login(user)  # Log the user in
-    response = client.post('/accounts_profile', registered_user)
+    response = client.post('/accounts_profile', data_from_form)
     assert ("alert" in str(response.content)
                 and "Votre compte a bien " in str(response.content)
                 and "mis " in str(response.content)
@@ -159,4 +159,4 @@ def test_profile(add_member_to_db):
 
     print("     should update the user account in the database")
     member = Member.objects.get(username=credentials["username"])
-    assert member.first_name == registered_user["first_name"]
+    assert member.first_name == data_from_form["first_name"]
