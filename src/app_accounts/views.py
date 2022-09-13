@@ -153,4 +153,4 @@ def signup_user(request):
 
 
 def complete_the_registration(request):
-    return HttpResponse("Completion of registration is coming soon")
+    return render(request, 'app_accounts/complete_the_registration.html')

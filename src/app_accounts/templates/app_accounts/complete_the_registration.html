@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<br/>
+<br/>
+<!-- signup-->
+<section class="page-section" id="signup">
+    <div class="container px-4 px-lg-5">
+
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-lg-8 col-xl-6 text-center">
+                <h2 class="mt-0">S'inscrire</h2>
+                <hr class="divider" />
+                <p class="text-muted mb-5">Terminer l'inscription</p>
+            </div>
+        </div>
+
+
+        <div class="row gx-4 gx-lg-5 justify-content-center mb-5">
+            <div class="col-lg-6">
+
+                <form id="signupForm" method="post" action="#" >
+                    {% csrf_token %}
+
+                    {% if messages %}
+                        <div class="alert alert-danger" role="alert">
+                            {% for message in messages %}
+                                {{ message }}
+                            {% endfor %}
+                        </div>
+
+                    {% else %}
+                        <div class="alert alert-light" role="alert" style="visibility: hidden">
+                            No message to display
+                        </div>
+
+
+                    {% endif%}
+
+                    <!-- OTP input-->
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="otp" type="text" placeholder="Code OTP reçu par email" name="otp" required />
+                        <label for="email">Code OTP reçu par email</label>
+                    </div>
+
+                    <!-- Pseudo input-->
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="pseudo" type="text" placeholder="Votre pseudo ici" name="pseudo" required />
+                        <label for="email">Pseudo</label>
+                    </div>
+
+                    <!-- First name input-->
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="First_name" type="text" placeholder="Votre prénom ici" name="first_name" />
+                        <label for="email">Prénom</label>
+                    </div>
+
+                    <!-- Password input-->
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="password" type="text" placeholder="Votre mot de passe ici" name="password" required />
+                        <label for="email">Mot de passe</label>
+                    </div>
+
+                    <!-- Is_offering_accommodation input-->
+                    <div class="form-floating mb-3">
+                        Situation :
+                        {% comment %} <label for="is_offering_accommodation">Situation</label> {% endcomment %}
+                        <select id="is_offering_accommodation" name="is_offering_accommodation">
+                            <option value="false">Je suis à la recherche d'un logement</option>
+                            <option value="true">Je propose un logement gratuitement</option>
+                        </select>
+                    </div>
+
+
+
+                    <!-- Submit Button-->
+                    <div class="d-grid"><button class="btn btn-primary btn-xl" id="submitButton" type="submit">Valider</button></div>
+
+                    <div class="row gx-4 gx-lg-5 justify-content-center">
+                        <div class="col-lg-8 col-xl-6 text-center">
+                            <a class="nav-link caramel-mou" id="login" href="{% url 'accounts_signup' %}">
+                                Envoyer un nouveau code OTP
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+
+
+{% endblock %}
