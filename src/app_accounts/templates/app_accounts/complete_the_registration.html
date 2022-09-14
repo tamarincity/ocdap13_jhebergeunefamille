@@ -41,42 +41,49 @@
 
                     <!-- OTP input-->
                     <div class="form-floating mb-3">
-                        <input class="form-control" id="otp" type="text" placeholder="Code OTP reçu par email" name="otp" required />
-                        <label for="email">Code OTP reçu par email</label>
+                        <input class="form-control" id="otp" type="text" placeholder="Code OTP reçu par email" name="otp" value="{{ otp }}" required />
+                        <label for="email">Code OTP reçu par email*</label>
                     </div>
 
                     <!-- Pseudo input-->
                     <div class="form-floating mb-3">
-                        <input class="form-control" id="pseudo" type="text" placeholder="Votre pseudo ici" name="pseudo" required />
-                        <label for="email">Pseudo</label>
+                        <input class="form-control" id="pseudo" type="text" placeholder="Votre pseudo ici" name="pseudo" value="{{ pseudo }}" required />
+                        <label for="pseudo">Pseudo*</label>
                     </div>
 
                     <!-- First name input-->
                     <div class="form-floating mb-3">
-                        <input class="form-control" id="First_name" type="text" placeholder="Votre prénom ici" name="first_name" />
-                        <label for="email">Prénom</label>
+                        <input class="form-control" id="first_name" type="text" placeholder="Votre prénom ici" name="first_name" value="{{ first_name }}" />
+                        <label for="first_name">Prénom</label>
                     </div>
 
                     <!-- Password input-->
                     <div class="form-floating mb-3">
                         <input class="form-control" id="password" type="text" placeholder="Votre mot de passe ici" name="password" required />
-                        <label for="email">Mot de passe</label>
+                        <label for="password">Mot de passe*</label>
                     </div>
 
                     <!-- Is_offering_accommodation input-->
                     <div class="form-floating mb-3">
-                        Situation :
-                        {% comment %} <label for="is_offering_accommodation">Situation</label> {% endcomment %}
+                        Situation* :
                         <select id="is_offering_accommodation" name="is_offering_accommodation">
-                            <option value="false">Je suis à la recherche d'un logement</option>
-                            <option value="true">Je propose un logement gratuitement</option>
+                            {% if is_offering_accommodation == True %}
+                                <option value="false">Je suis à la recherche d'un logement</option>
+                                <option selected value="true">Je propose un logement gratuitement</option>
+                            {% else %}
+                                <option selected value="false">Je suis à la recherche d'un logement</option>
+                                <option  value="true">Je propose un logement gratuitement</option>
+                            {% endif %}
                         </select>
+                    </div>
+                    <div class="form-floating mb-3">
+                        * Champ obligatoire
                     </div>
 
 
 
                     <!-- Submit Button-->
-                    <div class="d-grid"><button class="btn btn-primary btn-xl" id="submitButton" type="submit">Valider</button></div>
+                    <div class="d-grid">{{ user_info.is_offering_accommodation }}<button class="btn btn-primary btn-xl" id="submitButton" type="submit">Valider</button></div>
 
                     <div class="row gx-4 gx-lg-5 justify-content-center">
                         <div class="col-lg-8 col-xl-6 text-center">

@@ -65,7 +65,7 @@ def add_in_global_dict(key: str, value: Any):
     global_dict[key] = value
 
 
-def test_remove_from_global_dict(key: str):
+def remove_from_global_dict(key: str):
     if not isinstance(key, str):
         raise Exception("The key must be a string")
 
@@ -76,6 +76,15 @@ def test_remove_from_global_dict(key: str):
         del global_dict[key]
     except KeyError:
         raise Exception(f'The key "{key}" does not exist')
+
+
+def remove_unvalid_otp_from_global_dict():
+
+    now = datetime.now()
+    list_of_unvalid_keys = [key for key, value in global_dict.items() if value[1] < now]
+
+    for key in list_of_unvalid_keys:
+        del global_dict[key]
 
 
 def send_email(email: str, message: str) -> bool:

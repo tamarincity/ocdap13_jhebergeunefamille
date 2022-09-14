@@ -113,7 +113,7 @@ def profile(request):
 def signup_user(request):
     list(messages.get_messages(request))  # Clear all system messages
 
-    if request.method == 'POST':  # requête via formulaire
+    if request.method == 'POST':  # Request via the form
         username, password = _get_credentials(request)  # username = email
 
         if not username:
@@ -125,32 +125,91 @@ def signup_user(request):
             messages.success(request, ("Email incorrect !"))
             return render(request, 'app_accounts/signup.html')
 
-        try:
-            # Creation of the user if not exists else Exception
-            user = User.objects.create_user(
-                username=username[:150], password=password, email=username[:150])
+        if len(username) > 150:
+            messages.success(request, ("Email trop long !"))
+            return render(request, 'app_accounts/signup.html')
 
-            # Create otp
-            otp_code, otp_validity_end_datetime = utils.create_otp()
-            # Store OTP, email and OTP validity datetime in temporary dict
-            utils.add_in_global_dict(otp_code, [username, otp_validity_end_datetime])
-            # Send OTP by email
-            email_content = (f"Bonjour, vous avez {OTP_VALIDITY_DURATION_IN_MINUTE} minutes "
-                        f"pour compléter votre enregistrement. Votre code OTP est: {otp_code}")
-            is_email_sent = utils.send_email(username, email_content)
+        # Check if user already exists
+        if User.objects.filter(username=username).exists():
+            messages.success(request, ("Cet utilisateur est déjà enregistré !"))
+            return render(request, "app_accounts/signup.html")
 
-            if not is_email_sent:
-                time.sleep(random.randint(1, 5))
+        # Create otp
+        otp_code, otp_validity_end_datetime = utils.create_otp()
+        # Store OTP, email and OTP validity datetime in temporary dict
+        utils.add_in_global_dict(otp_code, [username, otp_validity_end_datetime])
+        # Send OTP by email
+        email_content = (f"Bonjour, vous avez {OTP_VALIDITY_DURATION_IN_MINUTE} minutes "
+                    f"pour compléter votre enregistrement. Votre code OTP est: {otp_code}")
+        is_email_sent = utils.send_email(username, email_content)
 
-            return redirect('accounts_complete_the_registration')
+        if not is_email_sent:
+            time.sleep(random.randint(1, 5))
 
-        except Exception as e:
-            print(str(e))
-            if "exists" in str(e):
-                messages.success(request, ("Cet utilisateur est déjà enregistré !"))
+        return redirect('accounts_complete_the_registration')
+
 
     return render(request, "app_accounts/signup.html")
 
 
 def complete_the_registration(request):
-    return render(request, 'app_accounts/complete_the_registration.html')
+    """
+    First the user fill the signup form then an OTP is sent to him.
+    thereafter he is redirected to this function to complete the registration.
+    This function displays and manages the registration form."""
+
+    list(messages.get_messages(request))  # Clear all system messages
+
+    data_from_form = {
+        "otp": request.POST.get('otp', ''),
+        "pseudo": request.POST.get('pseudo', ''),
+        "first_name": request.POST.get('first_name', ''),
+        "password": request.POST.get('password', ''),
+        "is_offering_accommodation": request.POST.get('is_offering_accommodation', '')}
+
+    data_from_form["is_offering_accommodation"] = (
+        True if data_from_form["is_offering_accommodation"] == "true"
+        else False)
+
+    utils.remove_unvalid_otp_from_global_dict()
+
+    if data_from_form["otp"]:
+        # Get email from global_dict thanks to the otp. {"any otp": ["an email", "validity datetime"]}
+        email = utils.global_dict.get(data_from_form["otp"], ["",""])[0]
+        if not email:
+            messages.success(request, ("Code OTP non valide !"))
+            return render(
+                request, 'app_accounts/complete_the_registration.html', context=data_from_form)
+
+        if not (data_from_form["pseudo"] and data_from_form["password"] and data_from_form["otp"]):
+            messages.success(request, ("Un des champs requis n'est pas renseigné"))
+            return render(
+                request, 'app_accounts/complete_the_registration.html', context=data_from_form)
+
+        if len(data_from_form["password"]) < 8:
+            messages.success(request, ("Le mot de passe doit contenir au moins 8 caractères"))
+            return render(
+                request, 'app_accounts/complete_the_registration.html', context=data_from_form)
+
+        # Remove OTP from global_dict
+        try:
+            del utils.global_dict[data_from_form["otp"]]
+        except Exception as e:
+            logging.error("Unable to remove OTP from global_dict via the key")
+
+        try:
+            # Creation of the user
+            user = User.objects.create_user(
+                username=email, password=data_from_form["password"], email=email)
+
+            # User connection
+            login(request, user)
+
+            messages.success(request, ("Bienvenue, vous êtes connecté !"))
+            return redirect('housing_home')
+
+        except Exception as e:
+            logging.error("Unable to create the user or to log the user in.)")
+            logging.error(str(e))
+
+    return render(request, 'app_accounts/complete_the_registration.html', context=data_from_form)
