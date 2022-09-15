@@ -4,6 +4,7 @@ from pprint import pprint
 import time
 
 import pytest
+from pytest_django.asserts import assertTemplateUsed
 
 from django.test import Client
 
@@ -131,7 +132,6 @@ def test_logout_user(monkeypatch):
     assert "Connexion" in str(response.content)
 
 
-@pytest.mark.test_me
 @pytest.mark.integration_test
 def test_profile(add_member_to_db):
 
@@ -160,3 +160,82 @@ def test_profile(add_member_to_db):
     print("     should update the user account in the database")
     member = Member.objects.get(username=credentials["username"])
     assert member.first_name == data_from_form["first_name"]
+
+
+@pytest.mark.test_me
+@pytest.mark.integration_test
+def test_signup_user(monkeypatch, add_member_to_db):
+
+    def mock_get_credentials(request):
+        return _mock_get_credentials(request)
+
+    def mock_check_email_validity(email: str) -> bool:
+        if (email
+                and isinstance(email, str)
+                and email.count("@") == 1):
+
+            right_part = email.split("@")[-1]
+
+            if "." in right_part:
+                return True
+        return False
+
+    def mock_utils_send_email(email, email_content):
+        if email == "email@failed.com":
+            return False
+        return True
+
+    monkeypatch.setattr("app_accounts.views._get_credentials", mock_get_credentials)
+    monkeypatch.setattr("utils.utils.check_email_validity", mock_check_email_validity)
+    monkeypatch.setattr("utils.utils.send_email", mock_utils_send_email)
+
+    print("If username (email) is missing then "
+            "should alert 'Le champ doit être rempli !'")
+    response = client.post('/accounts_signup', {"username": ""})
+
+    assert ("alert" in str(response.content)
+            and "Le champ doit" in str(response.content)
+            and "tre rempli" in str(response.content))
+
+    print("If username (email) is malformed then "
+            "should alert 'Email incorrect !'")
+    response = client.post('/accounts_signup', {"username": "toto@email"})
+    assert ("alert" in str(response.content)
+            and "Email incorrect" in str(response.content))
+
+    print("If username (email) contains more than 150 characters then "
+            "should alert 'Email trop long !'")
+    response = client.post('/accounts_signup', {"username": "t" *141 + "@email.com"})
+    assert ("alert" in str(response.content)
+            and "Email trop long" in str(response.content))
+
+    print("If the method of the request is not POST then "
+            "should render the file 'app_accounts/signup.html' without doing anything")
+    response = client.get('/accounts_signup', {"username": "t" *141 + "@email.com"})
+    assertTemplateUsed(response, 'app_accounts/signup.html')
+
+    print("If user is already registered then "
+            "should alert 'Cet utilisateur est déjà enregistré !'")
+    user = add_member_to_db  # Fixture
+    response = client.post('/accounts_signup', {"username": user.username})
+    assert ("alert" in str(response.content)
+            and "Cet utilisateur est d" in str(response.content)
+            and "enregistr" in str(response.content))
+
+    print("If the email that contains the OTP has not been sent then "
+            "should wait a while before "
+            "redirecting to the 'complete_the_registration' page")
+    response = client.post(
+        '/accounts_signup',
+        {"username": "email@failed.com"},
+        follow=True)
+    assert (response.redirect_chain[0][0] == "/accounts_complete_the_registration")
+
+    print("If user is not already registered then "
+            "should redirect to the 'complete_the_registration' page")
+    response = client.post(
+        '/accounts_signup',
+        {"username": "new@user.fr"},
+        follow=True)
+    assert (response.redirect_chain[0][0] == "/accounts_complete_the_registration")
+    

@@ -15,6 +15,7 @@ from app_accounts.constants import OTP_VALIDITY_DURATION_IN_MINUTE
 
 global_dict = {}
 
+
 def check_email_validity(email: str) -> bool:
     if email and isinstance(email, str) and email.count("@") == 1:
 
@@ -47,8 +48,6 @@ def create_otp() -> tuple[str, "datetime.datetime"]:
     now = datetime.now()
     otp_end_datetime = now + timedelta(minutes=OTP_VALIDITY_DURATION_IN_MINUTE)
 
-    print("otp_end_datetime type: ", type(otp_end_datetime))
-
     return otp_code, otp_end_datetime
 
 
@@ -63,19 +62,6 @@ def add_in_global_dict(key: str, value: Any):
         raise Exception("The value must not be falsy")
 
     global_dict[key] = value
-
-
-def remove_from_global_dict(key: str):
-    if not isinstance(key, str):
-        raise Exception("The key must be a string")
-
-    if not key:
-        raise Exception("The key must not be empty")
-
-    try:
-        del global_dict[key]
-    except KeyError:
-        raise Exception(f'The key "{key}" does not exist')
 
 
 def remove_unvalid_otp_from_global_dict():

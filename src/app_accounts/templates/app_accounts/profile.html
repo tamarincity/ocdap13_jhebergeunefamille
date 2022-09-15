@@ -13,7 +13,7 @@
                     {% if member.first_name %}
                         {{ member.first_name }}
                     {% else %}
-                        {{ member.username }}
+                        {{ member.pseudo }}
                     {% endif %}
                 </h2>
             </div>
@@ -31,7 +31,12 @@
                 <!-- Pseudo input (not editable)-->
                 <div class="form-floating mb-3">
                     <input readonly class="form-control" id="pseudo" type="text" placeholder="Pseudo" name="pseudo" value="{{ member.pseudo }}" required />
-                    <label for="pseudo">Pseudo (not editable)</label>
+                    <label for="pseudo">Pseudo (non éditable)</label>
+                </div>
+                <!-- Email input-->
+                <div class="form-floating mb-3">
+                    <input readonly class="form-control" id="email" type="text" name="email" value="{{ member.email }}" />
+                    <label for="email">Email (non éditable)</label>
                 </div>
                 <!-- First name input-->
                 <div class="form-floating mb-3">
@@ -43,10 +48,16 @@
                     <input class="form-control" id="last_name" type="text" placeholder="last name" name="last_name" value="{{ member.last_name }}" />
                     <label for="last_name">Nom de famille</label>
                 </div>
-                <!-- Email input-->
+                <!-- Telephone input-->
                 <div class="form-floating mb-3">
-                    <input readonly class="form-control" id="email" type="text" name="email" value="{{ member.email }}" />
-                    <label for="email">Email (not editable)</label>
+                    <input class="form-control" id="tel" type="tel" placeholder="Votre numéro de téléphone ici" name="tel" value="{{ member.phone }}" />
+                    <label for="tel">Téléphone</label>
+                </div>
+
+                <!-- Message of presentation input-->
+                <div class="form-floating mb-3">
+                    Message de présentation :<br />
+                    <textarea id="presentation" class="form-control" style="resize: none;" name="presentation" rows="4" maxlength="300" resize="false">{{ member.message_of_presentation }}</textarea>
                 </div>
 
                 <!-- Username -->

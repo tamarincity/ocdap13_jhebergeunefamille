@@ -42,30 +42,48 @@
                     <!-- OTP input-->
                     <div class="form-floating mb-3">
                         <input class="form-control" id="otp" type="text" placeholder="Code OTP reçu par email" name="otp" value="{{ otp }}" required />
-                        <label for="email">Code OTP reçu par email*</label>
+                        <label for="email">Code OTP reçu par email <font color="E8A75D"><b>*</b></font></label>
                     </div>
 
                     <!-- Pseudo input-->
                     <div class="form-floating mb-3">
                         <input class="form-control" id="pseudo" type="text" placeholder="Votre pseudo ici" name="pseudo" value="{{ pseudo }}" required />
-                        <label for="pseudo">Pseudo*</label>
+                        <label for="pseudo">Pseudo <font color="E8A75D"><b>*</b></font></label>
                     </div>
 
                     <!-- First name input-->
                     <div class="form-floating mb-3">
-                        <input class="form-control" id="first_name" type="text" placeholder="Votre prénom ici" name="first_name" value="{{ first_name }}" />
-                        <label for="first_name">Prénom</label>
+                        <input class="form-control" id="first_name" type="text" placeholder="Votre prénom ici" name="first_name" value="{{ first_name }}" required/>
+                        <label for="first_name">Prénom <font color="E8A75D"><b>*</b></font></label>
+                    </div>
+
+                    <!-- Telephone input-->
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="tel" type="tel" placeholder="Votre numéro de téléphone ici" name="tel" value="{{ tel }}" />
+                        <label for="tel">Téléphone</label>
+                    </div>
+
+                    <!-- Message of presentation input-->
+                    <div class="form-floating mb-3">
+                        Message de présentation :<br />
+                        <textarea
+                            id="presentation"
+                            class="form-control"
+                            style="resize: none;"
+                            name="presentation"
+                            maxlength="300"
+                            resize="false">{{ presentation }}</textarea>
                     </div>
 
                     <!-- Password input-->
                     <div class="form-floating mb-3">
-                        <input class="form-control" id="password" type="text" placeholder="Votre mot de passe ici" name="password" required />
-                        <label for="password">Mot de passe*</label>
+                        <input class="form-control" id="password" type="password" placeholder="Votre mot de passe ici" name="password" required />
+                        <label for="password">Mot de passe <font color="E8A75D"><b>*</b></font></label>
                     </div>
 
                     <!-- Is_offering_accommodation input-->
                     <div class="form-floating mb-3">
-                        Situation* :
+                        Situation <font color="E8A75D"><b>*</b></font> :
                         <select id="is_offering_accommodation" name="is_offering_accommodation">
                             {% if is_offering_accommodation == True %}
                                 <option value="false">Je suis à la recherche d'un logement</option>
@@ -77,7 +95,7 @@
                         </select>
                     </div>
                     <div class="form-floating mb-3">
-                        * Champ obligatoire
+                        <font color="E8A75D"><b>*</b> Champ obligatoire</font>
                     </div>
 
 

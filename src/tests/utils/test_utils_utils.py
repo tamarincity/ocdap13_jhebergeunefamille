@@ -7,6 +7,8 @@ from utils.utils import (
     check_email_validity,
     create_otp,
     create_random_chars,
+    global_dict,
+    remove_unvalid_otp_from_global_dict,
     send_email,
 )
 
@@ -96,8 +98,9 @@ def test_send_email(monkeypatch):
     assert send_email("good@email.com", "this_is_the_OTP_code") == True
 
 
-def  test_add_in_global_dict():
+def test_add_in_global_dict():
 
+    print("global_dict is a dictionary in which data such as the OTP is temporarily stored.")
     print("If the key is not a string then should raise an exception 'The key must be a string'")
     with pytest.raises(Exception):  # equiv to assert for exceptions
         utils.add_in_global_dict([1, 2, 3], "any value")
@@ -118,21 +121,19 @@ def  test_add_in_global_dict():
     del utils.global_dict["the_key"]
 
 
-def test_remove_from_global_dict():
+def test_remove_unvalid_otp_from_global_dict():
 
-    print("If the key is not a string then should raise an exception 'The key must be a string'")
-    with pytest.raises(Exception):  # equiv to assert for exceptions
-        utils.test_remove_from_global_dict([1, 2, 3])
+    print("global_dict is a dictionary in which data such as the OTP is temporarily stored.")
+    now = datetime.now()
+    unvalid_datetime = now - timedelta(seconds=180)
+    value = ["fake_email", unvalid_datetime, ]
 
-    print("If the key is empty then should raise an exception 'The key must not be empty'")
-    with pytest.raises(Exception):  # equiv to assert for exceptions
-        utils.test_remove_from_global_dict("")
+    print("Adding a fake OTP with an expired validity datetime in the global_dict "
+          "in order to test this function")
+    global_dict["fake_otp"] = value
+    assert global_dict["fake_otp"] == value
+    assert "fake_otp" in global_dict.keys()
 
-    print("If the key doesn't exists then should raise an exception 'The key does not exist'")
-    with pytest.raises(Exception):  # equiv to assert for exceptions
-        utils.test_remove_from_global_dict("jgkkgkg117600nllnààà")
-
-    print("If the key exists in 'global_dict' then should remove it with its value")
-    utils.global_dict["k 5fqk/ formed"] = "I exist :)"
-    utils.test_remove_from_global_dict("k 5fqk/ formed")
-    assert utils.global_dict.get("k hfqkl formed", "I don't exist :)") == "I don't exist :)"
+    print("This function should remove the otp from the global_dict")
+    remove_unvalid_otp_from_global_dict()
+    assert "fake_otp" not in global_dict.keys()

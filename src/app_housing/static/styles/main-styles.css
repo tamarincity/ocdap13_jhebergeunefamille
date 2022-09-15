@@ -576,6 +576,10 @@ textarea {
   line-height: inherit;
 }
 
+textarea {
+  width: 100%;
+}
+
 button,
 select {
   text-transform: none;
