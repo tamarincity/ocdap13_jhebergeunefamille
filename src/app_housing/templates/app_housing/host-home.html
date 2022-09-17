@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<!-- Masthead-->
+<header class="masthead-h-25">
+    <div class="container px-4 px-lg-5 h-20">
+        <div class="row gx-4 gx-lg-5 h-20 align-items-center justify-content-center text-center">
+            <div class="col-lg-8 align-self-baseline">
+                <br/><br/><br/>
+                <h2 class="text-white-75 mb-5 margin-top-20">
+                    Mes logements
+                </h2>
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert {{ message.tags }}" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</header>
+<br/><br/>
+
+<!-- List of houses -->
+<section>
+    <br /><br/>
+    <div class="row gx-4 gx-lg-5 justify-content-center mb-5">
+        <div class="col-lg-6">
+            List des Logements du membre
+
+        </div>
+    </div>
+</section>
+{% endblock %}

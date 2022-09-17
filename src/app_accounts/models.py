@@ -16,14 +16,18 @@ class Member(AbstractUser):
     def __str__(self):
         return f"{self.pseudo}, ({self.first_name})"
 
-    def remove_member(email: str) -> bool:
+    @classmethod
+    def remove_member(cls, email: str) -> bool:
         return True
 
-    def update_or_create_member(member: dict) -> bool:
+    @classmethod
+    def update_or_create_member(cls, member: dict) -> bool:
         return True
 
-    def add_to_contacts(member) -> bool:
+    @classmethod
+    def add_to_contacts(cls, member: "Member") -> bool:
         return True
 
-    def remove_from_contacts(member):
+    @classmethod
+    def remove_from_contacts(cls, member: "Member") -> bool:
         return True

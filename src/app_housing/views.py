@@ -1,17 +1,23 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.http import HttpResponse
 
 from utils import utils
 
 
 def home(request):
+    visitor = request.user
+    if visitor.is_authenticated and visitor.is_host:
+        return redirect('housing_host_home')
     return render(request, "app_housing/home.html")
 
 def get_all_cities_with_available_rooms(request):
     return HttpResponse("get_all_cities_with_available_rooms is coming soon")
 
 def host_home(request):
-    return HttpResponse("host_home_pagen is coming soon")
+    visitor = request.user
+    if not (visitor.is_authenticated and visitor.is_host):
+        return redirect('housing_home')
+    return render(request, "app_housing/host-home.html")
 
 
 def add_to_favorites(request):
