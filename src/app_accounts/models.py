@@ -10,8 +10,11 @@ class Member(AbstractUser):
     is_host = models.BooleanField(default=False)
     is_removed = models.BooleanField(default=False)
 
+    hosts = models.ManyToManyField('Member', related_name='contacts')
+
+
     def __str__(self):
-        return f"{self.first_name} ({self.username})"
+        return f"{self.pseudo}, ({self.first_name})"
 
     def remove_member(email: str) -> bool:
         return True

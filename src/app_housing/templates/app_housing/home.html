@@ -9,11 +9,11 @@
             <div class="col-lg-8 align-self-end">
                 <br /><br /><br /><br /><br />
                 {% if messages %}
-                    <div class="alert alert-danger" role="alert">
-                        {% for message in messages %}
+                    {% for message in messages %}
+                        <div class="alert {{ message.tags }}" role="alert">
                             {{ message }}
-                        {% endfor %}
-                    </div>
+                        </div>
+                    {% endfor %}
 
                 {% endif %}
                 <h1 class="open-sans"><span class="primary-light">J</span><span class="primary-dark">'</span><span class="primary-light">heberge</span><span class="primary-dark">une</span><span class="primary-light">famille</span><span class="primary-dark">.app</span></h1>

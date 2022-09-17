@@ -15,6 +15,8 @@ from pathlib import Path
 
 import environ
 
+from django.contrib.messages import constants as messages
+
 
 env = environ.Env(DEBUG=(bool, False))
 
@@ -35,6 +37,15 @@ SECRET_KEY = "django-insecure-3fzu0f2h$0cw)d4i09(gd)oy$fypwuhexo^q@%41+-@_zrag(k
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
+# Django messages colors
+MESSAGE_TAGS = {
+        messages.DEBUG: 'alert-secondary',
+        messages.INFO: 'alert-info',
+        messages.SUCCESS: 'alert-success',
+        messages.WARNING: 'alert-warning',
+        messages.ERROR: 'alert-danger',
+ }
 
 # Logging ===================
 LOGGING = {

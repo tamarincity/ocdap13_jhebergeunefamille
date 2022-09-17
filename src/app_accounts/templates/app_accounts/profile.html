@@ -71,11 +71,11 @@
                 </div>
 
                 {% if messages %}
-                    <div class="alert alert-danger" role="alert">
-                        {% for message in messages %}
+                    {% for message in messages %}
+                        <div class="alert {{ message.tags }}" role="alert">
                             {{ message }}
-                        {% endfor %}
-                    </div>
+                        </div>
+                    {% endfor %}
                 {% endif%}
 
                 <!-- Submit Button-->

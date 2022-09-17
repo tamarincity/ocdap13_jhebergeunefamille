@@ -7,6 +7,8 @@ from utils import utils
 def home(request):
     return render(request, "app_housing/home.html")
 
+def get_all_cities_with_available_rooms(request):
+    return HttpResponse("get_all_cities_with_available_rooms is coming soon")
 
 def host_home(request):
     return HttpResponse("host_home_pagen is coming soon")

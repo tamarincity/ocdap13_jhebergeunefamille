@@ -10,24 +10,24 @@
     <div class="container px-4 px-lg-5">
         <div class="row gx-4 gx-lg-5 justify-content-center">
             <div class="col-lg-8 col-xl-6 text-center">
-                <h2 class="mt-0">Connexion</h2>
+                <h2 class="mt-0">Nouveau mot de passe</h2>
                 <hr class="divider" />
-                <p class="text-muted mb-5">Profitez de toutes les fonctionnalités !</p>
+                <p class="text-muted mb-5">Vous avez 10 minutes pour entrer le code <b>OTP</b> que vous avez reçu par e-mail !</p>
             </div>
         </div>
         <div class="row gx-4 gx-lg-5 justify-content-center mb-5">
             <div class="col-lg-6">
 
-                <form id="loginForm" method="post" action="#" > <!-- action="#" => same file -->
+                <form id="newPswdForm" method="post" action="#" >
                     {% csrf_token %}
-                    <!-- Email address input-->
+                    <!-- OTP input-->
                     <div class="form-floating mb-3">
-                        <input class="form-control" id="username" type="email" placeholder="un@exemple.com" name="username" required />
-                        <label for="email">Email address</label>
+                        <input class="form-control" id="otp" type="text" placeholder="Votre code OTP ici" name="otp" required />
+                        <label for="otp">OTP</label>
                     </div>
-                    <!-- Password input-->
+                    <!-- New password input-->
                     <div class="form-floating mb-3">
-                        <input class="form-control" id="password" type="password" placeholder="Mot de passe" name="password" required />
+                        <input class="form-control" id="password" type="password" placeholder="Nouveau mot de passe" name="password" required />
                         <label for="password">Mot de passe</label>
                     </div>
 
@@ -49,8 +49,8 @@
                     <div class="d-grid"><button class="btn btn-primary btn-xl" id="submitButton" type="submit">Valider</button></div>
                     <div class="row gx-4 gx-lg-5 justify-content-center">
                         <div class="col-lg-8 col-xl-6 text-center">
-                            <a class="nav-link primary-dark" id="login" href="{% url 'accounts_forgoten_pswd' %}">
-                                Mot de passe oublié
+                            <a class="nav-link caramel-mou" id="login" href="{% url 'accounts_forgoten_pswd' %}">
+                                Recevoir un nouveau code OTP
                             </a>
                         </div>
                     </div>

@@ -78,7 +78,7 @@ def send_email(email: str, message: str) -> bool:
 
     recipient = email
 
-    subject = "Pur Beurre: Votre code OTP"
+    subject = "jhebergeunefamille: Votre code OTP"
 
     try:
         send_mail(

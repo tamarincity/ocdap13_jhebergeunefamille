@@ -26,4 +26,6 @@ urlpatterns = [
     path('legal_notice', views.legal_notice, name='housing_legal_notice'),
     # Home page
     path('', views.home, name='housing_home'),
+    # route for the user in need to get the list of cities that have available rooms
+    path('cities', views.get_all_cities_with_available_rooms, name='housing_cities'),
 ]
