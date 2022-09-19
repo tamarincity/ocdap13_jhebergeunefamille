@@ -5,11 +5,12 @@ from django.db import models
 from app_accounts.models import Member
 
 class House(models.Model):
+    capacity = models.IntegerField(default=1)
     owner = models.ForeignKey(
         Member, related_name="list_of_houses", on_delete=models.CASCADE)
 
     city = models.CharField(max_length=100, null=True, blank=True)
-    street = models.CharField(max_length=100, null=True, blank=True)
+    nbr_n_street = models.CharField(max_length=100, null=True, blank=True)
     zip = models.IntegerField()
     picture_front_of_house = models.ImageField(
         upload_to="pictures_front_of_house/",

@@ -27,12 +27,82 @@
 
 <!-- List of houses -->
 <section>
-    <br /><br/>
     <div class="row gx-4 gx-lg-5 justify-content-center mb-5">
         <div class="col-lg-6">
-            List des Logements du membre
+            <center>
+                <a href="housing_create_or_update_house">
+                    <button class="btn btn-primary btn-xs" type="button">
+                        <i class="bi bi-plus-circle"></i> Ajouter un logement
+                    </button>
+                </a>
+            </center>
+            <br/>
+            {% for house in houses %}
+                <div class="card">
+                    <div class="card-body flex-row space-between">
+                        {% if house.is_available %}
+                            <div class="green-div" style="line-height: 250%">&nbsp;&nbsp;&nbsp;Disponible&nbsp;&nbsp;&nbsp;</div>
+                        {% else %}
+                            <div class="orange-div" style="line-height: 250%">&nbsp;Indisponible&nbsp;</div>
+                        {% endif %}
+                            &nbsp;&nbsp;
+                        <div class="flex-column" style="flex: 1;">
+                            <div class="line-height-250">{{ house.city}} </div>
+                            <div>{{ house.nbr_n_street }} ({{ house.zip }})</div>
+                            <div class="line-height-250">Capacité: {{ house.capacity }} </div>
+                        </div>
+                        <div>&nbsp;</div>
+                        <!-- Button modify -->
+                        <form method="post" action="housing_create_or_update_house">
+                            {% csrf_token %}
+                            <div id="btn-update-house">
+                                <input type="hidden" name="id_of_house_to_update" value="{{ house.id }}" />
+                                <button type="submit" class="btn btn-primary"><i class="bi bi-pencil-fill"></i></button>
+                            </div>
+                        </form>
+                        &nbsp;
+                        <!-- Button trash (trigger a modal to confirm removal) -->
+                        <div><button type="button"  class="btn btn-danger" onclick="modalConfirmRemoveHouse({{ house.id }})"><i class="bi bi-trash-fill"></i></button></div>
+                    </div>
+                </div>
+            {% endfor %}
 
         </div>
     </div>
+
 </section>
+
+<!-- Modal to confirm removal -->
+<div id="modal-confirm-remove-house" class="fast-modal" style="display: none">
+    <div class="fast-modal-card">
+
+        <div class="container px-4 px-lg-5 h-20">
+            <div class="row gx-4 gx-lg-5 h-20 align-items-center justify-content-center text-center">
+                <div class="col-lg-8 align-self-baseline">
+                    <br/><br/>
+                    <h2 class="mb-5 margin-top-20">
+                        Suppression de logement ?
+                    </h2>
+                    <h4 class="mb-5 margin-top-20">
+                        Voulez-vous vraiment supprimer ce logement ?
+                    </h4>
+                    <hr class="divider" />
+                    <br/><br/>
+                    <div class="flex-row justify-content-around">
+                        <button type="button"  class="btn btn-primary" onclick="closeModalConfirmRemoveHouse()"> Annuler </button>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <form method="post" action="#">
+                            {% csrf_token %}
+                            <div id="btn-confirmation-remove-house">
+                                <!-- Javascript will add a delete (submit) button -->
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
 {% endblock %}

@@ -14,7 +14,7 @@ class Member(AbstractUser):
 
 
     def __str__(self):
-        return f"{self.pseudo}, ({self.first_name})"
+        return f"{self.pseudo} ({self.first_name})"
 
     @classmethod
     def remove_member(cls, email: str) -> bool:

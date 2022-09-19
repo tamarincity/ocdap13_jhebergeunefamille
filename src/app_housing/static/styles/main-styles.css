@@ -173,6 +173,40 @@ h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1 {
   background-color: #fff;
 }
 
+.green-div {
+  color: #fff;
+  background-color: #198754;
+  border-color: #198754;
+}
+
+.orange-div {
+  color: #fff;
+  background-color: rgb(209, 114, 6);
+  border-color: rgb(209, 114, 6);
+}
+
+.fast-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.fast-modal-card {
+  position: fixed;
+  left: 10%;
+  top: 20%;
+  z-index: 20;
+  width: 80%;
+  height: 60vh;
+  background-color: #fff;
+  border-radius: 20px;
+}
+.line-height-250 {
+  line-height: 250%
+}
+
 .white-text {
   color: white;
 }
@@ -5726,6 +5760,7 @@ textarea.form-control-lg {
   overflow-x: hidden;
   overflow-y: auto;
   outline: 0;
+  background-color: coral;
 }
 
 .modal-dialog {
