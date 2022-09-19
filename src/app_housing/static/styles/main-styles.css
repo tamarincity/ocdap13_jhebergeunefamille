@@ -173,16 +173,12 @@ h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1 {
   background-color: #fff;
 }
 
-.green-div {
-  color: #fff;
-  background-color: #198754;
-  border-color: #198754;
+.green-color {
+  color: #106b40;
 }
 
-.orange-div {
-  color: #fff;
-  background-color: rgb(209, 114, 6);
-  border-color: rgb(209, 114, 6);
+.orange-color {
+  color: #e07b06;
 }
 
 .fast-modal {
@@ -4783,6 +4779,7 @@ textarea.form-control-lg {
 }
 
 .card {
+  margin-top: 3px;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -4792,6 +4789,11 @@ textarea.form-control-lg {
   background-clip: border-box;
   border: 1px solid rgba(0, 0, 0, 0.125);
   border-radius: 0.25rem;
+}
+.card:hover {
+  box-shadow: 10px 5px 5px gray;
+  top: -5px;
+  transition: all 0.3s ease-in;
 }
 .card > hr {
   margin-right: 0;

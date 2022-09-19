@@ -41,13 +41,17 @@
                 <div class="card">
                     <div class="card-body flex-row space-between">
                         {% if house.is_available %}
-                            <div class="green-div" style="line-height: 250%">&nbsp;&nbsp;&nbsp;Disponible&nbsp;&nbsp;&nbsp;</div>
+                            <div class="green-color" style="line-height: 250%">
+                                <img src="static/images/house_002_green.png" alt="maison de couleur verte" title="Disponible" width="80rem" /><br/>
+                                &nbsp;&nbsp;&nbsp;Disponible&nbsp;&nbsp;&nbsp;</div>
                         {% else %}
-                            <div class="orange-div" style="line-height: 250%">&nbsp;Indisponible&nbsp;</div>
+                            <div class="orange-color" style="line-height: 250%">
+                                <img src="static/images/house_001_orange.png" alt="maison de couleur orange" title="Indisponible" width="80rem" /><br/>
+                                &nbsp;Indisponible&nbsp;</div>
                         {% endif %}
                             &nbsp;&nbsp;
                         <div class="flex-column" style="flex: 1;">
-                            <div class="line-height-250">{{ house.city}} </div>
+                            <div class="line-height-250"><b>{{ house.city}}</b> </div>
                             <div>{{ house.nbr_n_street }} ({{ house.zip }})</div>
                             <div class="line-height-250">Capacité: {{ house.capacity }} </div>
                         </div>
