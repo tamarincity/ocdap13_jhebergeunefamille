@@ -11,7 +11,7 @@
 
         <div class="row gx-4 gx-lg-5 justify-content-center">
             <div class="col-lg-8 col-xl-6 text-center">
-                <h2 class="mt-0">Ajout/Modification de logement</h2>
+                <h2 class="mt-0 primary-dark">Ajout/Modification de logement</h2>
             </div>
         </div>
 
@@ -19,7 +19,7 @@
         <div class="row gx-4 gx-lg-5 justify-content-center mb-5">
             <div class="col-lg-6">
 
-                <form id="signupForm" method="post" action="#" >
+                <form id="signupForm" method="post" action="#" enctype="multipart/form-data">
                     {% csrf_token %}
 
                     {% if messages %}
@@ -99,6 +99,24 @@
                                 <option selected value="true">Disponible</option>
                             {% endif %}
                         </select>
+                    </div>
+
+                    <!-- picture_front_of_house input-->
+                    <div class="form-floating mb-3">
+                        <hr class="divider" />
+                        <span class="primary-dark"><b>Photos (Facultatif)</b></span>
+                        <p>
+                            <span class="primary-light">Façade du logement</span><br/>
+                            {{ form.file_picture_front_of_house }}
+                        </p>
+                        <p>
+                            <span class="primary-light">Chambre</span><br/>
+                            {{ form.file_picture_of_bedroom }}
+                        </p>
+                        <p>
+                            <span class="primary-light">Autre</span><br/>
+                            {{ form.file_other_picture }}
+                        </p>
                     </div>
                     <div class="form-floating mb-3">
                         <font color="E8A75D"><b>*</b> Champ obligatoire</font>

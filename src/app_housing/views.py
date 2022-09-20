@@ -8,6 +8,7 @@ from django.contrib import messages
 from icecream import ic
 
 from app_housing.models import House
+from app_housing.forms import UploadFileForm
 from utils import utils
 
 
@@ -57,14 +58,35 @@ def create_or_update_house(request):
             logging.error(str(e))
             messages.error(request, ("Une erreur inattendue est arrivée ! Contactez les développeurs."))
 
+    # Getting files (pictures) from the form
+    form = UploadFileForm(request.POST, request.FILES)  # Get the django form (where is upload system)
+    file_picture_front_of_house = request.FILES.get('file_picture_front_of_house')
+    file_picture_of_bedroom = request.FILES.get('file_picture_of_bedroom')
+    file_other_picture = request.FILES.get('file_other_picture')
+
+    # Adding pictures to the house
+    nbr_of_uploaded_pictures = 0
+    if file_picture_front_of_house:
+                house_to_update.picture_front_of_house = file_picture_front_of_house
+                nbr_of_uploaded_pictures += 1
+    if file_picture_of_bedroom:
+                house_to_update.picture_of_bedroom = file_picture_of_bedroom
+                nbr_of_uploaded_pictures += 1
+    if file_other_picture:
+                house_to_update.other_picture = file_other_picture
+                nbr_of_uploaded_pictures += 1
+
+    house_to_update.save()
+    if nbr_of_uploaded_pictures == 1:
+        messages.success(request, "La nouvelle photo a bien été enregistrée")
+    if nbr_of_uploaded_pictures > 1:
+        messages.success(request, "Les nouvelles photos ont bien été enregistrées")
+
     # Getting data from request
     capacity = request.POST.get('capacity', "")
     city = request.POST.get('city', "")
     nbr_n_street = request.POST.get('nbr_n_street', "")
     zip = request.POST.get('zip', "")
-    picture_front_of_house = request.POST.get('picture_front_of_house', "")
-    picture_of_bedroom = request.POST.get('picture_of_bedroom', "")
-    other_picture = request.POST.get('other_picture', "")
     message_of_presentation_of_house = request.POST.get('message_of_presentation_of_house', "")
     is_available = request.POST.get('is_available', "")
 
@@ -104,9 +126,6 @@ def create_or_update_house(request):
                 and house_to_update.city == city
                 and house_to_update.zip == zip
                 and house_to_update.nbr_n_street == nbr_n_street
-                and house_to_update.picture_front_of_house == picture_front_of_house
-                and house_to_update.picture_of_bedroom == picture_of_bedroom
-                and house_to_update.other_picture == other_picture
                 and house_to_update.message_of_presentation_of_house == (
                     message_of_presentation_of_house)
                 and house_to_update.is_available == is_available):
@@ -116,16 +135,13 @@ def create_or_update_house(request):
             house_to_update.city = city
             house_to_update.zip = zip
             house_to_update.nbr_n_street = nbr_n_street
-            house_to_update.picture_front_of_house = picture_front_of_house
-            house_to_update.picture_of_bedroom = picture_of_bedroom
-            house_to_update.other_picture = other_picture
             house_to_update.message_of_presentation_of_house = (
                     message_of_presentation_of_house)
             house_to_update.is_available = is_available
 
             house_to_update.save()
 
-            messages.success(request, "Les nouvelles informations on bien été enregistrées")
+            messages.success(request, "Les nouvelles informations ont bien été enregistrées")
             return redirect('housing_home')
 
     # If the required fields are filled
@@ -142,7 +158,7 @@ def create_or_update_house(request):
             city=city,
             zip=zip,
             nbr_n_street=nbr_n_street,
-            picture_front_of_house=None or picture_front_of_house,
+            # picture_front_of_house=None or picture_front_of_house,
             picture_of_bedroom=None or picture_of_bedroom,
             other_picture=None or other_picture,
             message_of_presentation_of_house=(
@@ -151,7 +167,7 @@ def create_or_update_house(request):
         new_house.save()
 
 
-    return render(request, "app_housing/create-or-update-house.html", context={"house": house_to_update})
+    return render(request, "app_housing/create-or-update-house.html", context={"house": house_to_update, "form": form})
 
 
 def get_all_cities_with_available_rooms(request):

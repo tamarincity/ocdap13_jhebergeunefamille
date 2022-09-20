@@ -13,9 +13,11 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import os
 from pathlib import Path
 
-import environ
-
 from django.contrib.messages import constants as messages
+
+import environ
+import boto3
+
 
 
 env = environ.Env(DEBUG=(bool, False))
@@ -85,10 +87,12 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "app_accounts",
     "app_housing",
+    "storages",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -174,6 +178,16 @@ STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
+
+
+# AWS S3 bucket settings
+AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID', default=None)
+AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY', default=None)
+AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME', default=None)
+AWS_QUERYSTRING_AUTH = env('AWS_QUERYSTRING_AUTH', default=None)
+
+AWS_DEFAULT_ACL = None
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
