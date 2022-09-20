@@ -1,1 +1,120 @@
-create_or_update_house is coming very soon
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<br/>
+<br/>
+<!-- signup-->
+<section class="page-section" id="signup">
+    <div class="container px-4 px-lg-5">
+
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-lg-8 col-xl-6 text-center">
+                <h2 class="mt-0">Ajout/Modification de logement</h2>
+            </div>
+        </div>
+
+
+        <div class="row gx-4 gx-lg-5 justify-content-center mb-5">
+            <div class="col-lg-6">
+
+                <form id="signupForm" method="post" action="#" >
+                    {% csrf_token %}
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert {{ message.tags }}" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+
+                    {% else %}
+                        <div class="alert alert-light" role="alert" style="visibility: hidden">
+                            No message to display
+                        </div>
+
+
+                    {% endif%}
+
+                    <!-- id_of_house_to_update input-->
+                    <input type="hidden" name="id_of_house_to_update" value="{{ house.id }}" />
+
+                    <!-- Capacity input-->
+                    <div class="form-floating mb-3">
+                        Nombre de personnes pouvant être accueillies <font color="E8A75D"><b>*</b></font>
+                        <div class="form-outline">
+                            <input
+                                id="capacity-input"
+                                type="number"
+                                min="1"
+                                step="1"
+                                name="capacity"
+                                class="form-control"
+                                placeholder="Ex: 2"
+                                value="{{ house.capacity }}"
+                                required />
+                        </div>
+                    </div>
+
+                    <!-- City input-->
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="city" type="text" placeholder="Ville" name="city" value="{{ house.city }}" required />
+                        <label for="city">Ville <font color="E8A75D"><b>*</b></font></label>
+                    </div>
+
+                    <!-- Zip input-->
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="zip" type="number" placeholder="Code postal" name="zip" value="{{ house.zip }}" required />
+                        <label for="zip">Code postal <font color="E8A75D"><b>*</b></font></label>
+                    </div>
+
+                    <!-- nbr_n_street input-->
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="nbr_n_street" type="text" placeholder="Num. et rue" name="nbr_n_street" value="{{ house.nbr_n_street }}" required />
+                        <label for="nbr_n_street">Num. et rue <font color="E8A75D"><b>*</b></font></label>
+                    </div>
+
+                    <!-- message_of_presentation_of_house input-->
+                    <div class="form-floating mb-3">
+                        Message (facultatif) :<br />
+                        <textarea
+                            id="message_of_presentation_of_house"
+                            class="form-control"
+                            style="resize: none;"
+                            name="message_of_presentation_of_house"
+                            maxlength="300"
+                            resize="false">{{ house.message_of_presentation_of_house }}</textarea>
+                    </div>
+
+                    <!-- is_available input-->
+                    <div class="form-floating mb-3">
+                        Disponibilité du logement <font color="E8A75D"><b>*</b></font> :
+                        <select id="is_available" name="is_available">
+                            {% if house.is_available == False %}
+                                <option selected value="false">Non disponible</option>
+                                <option  value="true">Disponible</option>
+                            {% else %}
+                                <option value="false">Non disponible</option>
+                                <option selected value="true">Disponible</option>
+                            {% endif %}
+                        </select>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <font color="E8A75D"><b>*</b> Champ obligatoire</font>
+                    </div>
+
+
+
+                    <!-- Submit Button-->
+                    <div class="d-grid"><button class="btn btn-primary btn-xl" id="submitButton" type="submit">Valider</button></div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+
+
+{% endblock %}

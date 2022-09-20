@@ -7,6 +7,7 @@ from django.contrib import messages
 
 from icecream import ic
 
+from app_housing.models import House
 from utils import utils
 
 
@@ -43,52 +44,112 @@ def create_or_update_house(request):
     if not (visitor.is_authenticated and visitor.is_host):
         return redirect('housing_home')
 
+    house_to_update = None
+
+    # Get the id of the house to update from the request
+    if id_of_house_to_update := request.POST.get('id_of_house_to_update', ""):
+        print("id of house to update: ", id_of_house_to_update)
+        try:
+            # Get the involved house from the database
+            house_to_update = visitor.list_of_houses.get(id=id_of_house_to_update)
+        except Exception as e:
+            logging.error("Couldn't find house to update from the houses of the visitor")
+            logging.error(str(e))
+            messages.error(request, ("Une erreur inattendue est arrivée ! Contactez les développeurs."))
+
+    # Getting data from request
     capacity = request.POST.get('capacity', "")
     city = request.POST.get('city', "")
-    nbr_n_street = request.POST.get('city', "")
-    zip = request.POST.get('city', "")
+    nbr_n_street = request.POST.get('nbr_n_street', "")
+    zip = request.POST.get('zip', "")
     picture_front_of_house = request.POST.get('picture_front_of_house', "")
     picture_of_bedroom = request.POST.get('picture_of_bedroom', "")
-    other_picture = request.POST.get('other_picture', "")
     other_picture = request.POST.get('other_picture', "")
     message_of_presentation_of_house = request.POST.get('message_of_presentation_of_house', "")
     is_available = request.POST.get('is_available', "")
 
-    house_to_update = None
+    if is_available == "false":
+        is_available = False
+    elif is_available == "true":
+        is_available = True
 
-    if id_of_house_to_update := request.POST.get('id_of_house_to_update', ""):
-        try:
-            house_to_update = visitor.list_of_houses.get(id=id_of_house_to_update)
-            house_to_update.capacity = capacity or house_to_update.capacity
-            house_to_update.city = city or house_to_update.city
-            house_to_update.nbr_n_street = nbr_n_street or house_to_update.nbr_n_street
-            house_to_update.zip = zip or house_to_update.zip
-            house_to_update.picture_of_bedroom = (
-                picture_of_bedroom
-                or house_to_update.picture_of_bedroom)
+    try:
+        capacity = int(capacity) if capacity else None
 
-            house_to_update.other_picture = other_picture or house_to_update.other_picture
+    except Exception as e:
+        messages.error(request, "La capacité doit être un nombre entier !")
+        return render(request,
+                      "app_housing/create-or-update-house.html",
+                      context={"house": house_to_update})
+
+    try:
+        zip = int(zip) if zip else None
+
+    except Exception as e:
+        messages.error(request, "Le code postal doit être un nombre entier !")
+        return render(request,
+                      "app_housing/create-or-update-house.html",
+                      context={"house": house_to_update})
+
+
+    # If the required fields are filled
+    if (capacity
+            and city
+            and zip
+            and nbr_n_street
+            and house_to_update):  # If it's an update of the house
+
+        # If the data of the house and the one from the form are NOT similar
+        if not (house_to_update.capacity == capacity
+                and house_to_update.city == city
+                and house_to_update.zip == zip
+                and house_to_update.nbr_n_street == nbr_n_street
+                and house_to_update.picture_front_of_house == picture_front_of_house
+                and house_to_update.picture_of_bedroom == picture_of_bedroom
+                and house_to_update.other_picture == other_picture
+                and house_to_update.message_of_presentation_of_house == (
+                    message_of_presentation_of_house)
+                and house_to_update.is_available == is_available):
+
+            # Updating the house
+            house_to_update.capacity = capacity
+            house_to_update.city = city
+            house_to_update.zip = zip
+            house_to_update.nbr_n_street = nbr_n_street
+            house_to_update.picture_front_of_house = picture_front_of_house
+            house_to_update.picture_of_bedroom = picture_of_bedroom
+            house_to_update.other_picture = other_picture
             house_to_update.message_of_presentation_of_house = (
-                message_of_presentation_of_house
-                or house_to_update.message_of_presentation_of_house)
-
-            house_to_update.is_available = (
-                is_available
-                or house_to_update.is_available)
-
-            house_to_update.picture_front_of_house = (
-                picture_front_of_house
-                or house_to_update.picture_front_of_house)
+                    message_of_presentation_of_house)
+            house_to_update.is_available = is_available
 
             house_to_update.save()
-            print()
-            print()
-            print("HOUSE IN ", house_to_update.city)
-            print()
-            print()
-        except Exception as e:
-            logging.error("Couldn't find house to update from the houses of the visitor")
-            messages.error(request, ("Une erreur inattendue est arrivée ! Contactez les développeurs."))
+
+            messages.success(request, "Les nouvelles informations on bien été enregistrées")
+            return redirect('housing_home')
+
+    # If the required fields are filled
+    if (capacity
+            and city
+            and zip
+            and nbr_n_street
+            and not house_to_update):  # If it's a new house
+
+        # Creation of the house
+        new_house = House(
+            owner=visitor,
+            capacity=capacity,
+            city=city,
+            zip=zip,
+            nbr_n_street=nbr_n_street,
+            picture_front_of_house=None or picture_front_of_house,
+            picture_of_bedroom=None or picture_of_bedroom,
+            other_picture=None or other_picture,
+            message_of_presentation_of_house=(
+                    message_of_presentation_of_house),
+            is_available=is_available)
+        new_house.save()
+
 
     return render(request, "app_housing/create-or-update-house.html", context={"house": house_to_update})
 
