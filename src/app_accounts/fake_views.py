@@ -22,6 +22,7 @@ from .constants import (
 
 User = get_user_model()
 
+
 def fake_1(request):
     try:
         in_need = Member.objects.get(username="mimi@yopmail.com")

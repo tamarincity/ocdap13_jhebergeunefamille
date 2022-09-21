@@ -12,7 +12,6 @@ class Member(AbstractUser):
 
     hosts = models.ManyToManyField('Member', related_name='contacts')
 
-
     def __str__(self):
         return f"{self.pseudo} ({self.first_name})"
 

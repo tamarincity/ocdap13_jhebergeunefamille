@@ -29,6 +29,7 @@
 <section>
     <div class="row gx-4 gx-lg-5 justify-content-center mb-5">
         <div class="col-lg-6">
+            <br/><br/>
             <center>
                 <a href="housing_create_or_update_house">
                     <button class="btn btn-primary btn-xs" type="button">
@@ -40,6 +41,7 @@
             {% for house in houses %}
                 <div class="card">
                     <div class="card-body flex-row space-between">
+                        <!-- Icon house availability -->
                         {% if house.is_available %}
                             <div class="green-color" style="line-height: 250%">
                                 <img src="static/images/house_002_green.png" alt="maison de couleur verte" title="Disponible" width="80rem" /><br/>
@@ -50,10 +52,24 @@
                                 &nbsp;Indisponible&nbsp;</div>
                         {% endif %}
                             &nbsp;&nbsp;
+
                         <div class="flex-column" style="flex: 1;">
+
+                            <!-- Address -->
                             <div class="line-height-250"><b>{{ house.city}}</b> </div>
                             <div>{{ house.nbr_n_street }} ({{ house.zip }})</div>
                             <div class="line-height-250">Capacité: {{ house.capacity }} </div>
+                            <div class="line-height-250">
+                                {% if house.url_picture_front_of_house %}
+                                    <a href="{{ house.url_picture_front_of_house }}" target="_blank">voir image</a><br/>
+                                {% endif %}
+                                {% if house.url_picture_of_bedroom %}
+                                    <a href="{{ house.url_picture_of_bedroom }}" target="_blank">voir image</a><br/>
+                                {% endif %}
+                                {% if house.url_other_picture %}
+                                    <a href="{{ house.url_other_picture }}" target="_blank">voir image</a><br/>
+                                {% endif %}
+                            </div>
                         </div>
                         <div>&nbsp;</div>
                         <!-- Button modify -->

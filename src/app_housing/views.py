@@ -1,15 +1,23 @@
 import logging
+from datetime import datetime
 
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from app_accounts.models import Member
 from django.contrib import messages
+from django.conf import settings
 
 from icecream import ic
+import environ
 
 from app_housing.models import House
 from app_housing.forms import UploadFileForm
 from utils import utils
+from app_housing.constants import (
+    PICTURES_FRONT_OF_HOUSES_DIRECTORY,
+    PICTURES_OF_BEDROOMS_DIRECTORY,
+    OTHER_PICTURES_DIRECTORY,
+)
 
 
 def home(request):
@@ -35,17 +43,15 @@ def host_home(request):
             messages.error(request, ("Une erreur inattendue est arrivée ! Contactez les développeurs."))
 
     houses = visitor.list_of_houses.all()
-    houses = [house for house in houses if not house.is_removed]
+    houses = [house for house in houses if not house.is_removed and house.city]
 
     return render(request, "app_housing/host-home.html", context={"houses": houses})
 
 
-def create_or_update_house(request):
+def _get_or_create_house(request) -> "House":
+    """Get or create a house.
+    Return: house_to_update (instance of House)"""
     visitor = request.user
-    if not (visitor.is_authenticated and visitor.is_host):
-        return redirect('housing_home')
-
-    house_to_update = None
 
     # Get the id of the house to update from the request
     if id_of_house_to_update := request.POST.get('id_of_house_to_update', ""):
@@ -58,29 +64,94 @@ def create_or_update_house(request):
             logging.error(str(e))
             messages.error(request, ("Une erreur inattendue est arrivée ! Contactez les développeurs."))
 
-    # Getting files (pictures) from the form
-    form = UploadFileForm(request.POST, request.FILES)  # Get the django form (where is upload system)
-    file_picture_front_of_house = request.FILES.get('file_picture_front_of_house')
-    file_picture_of_bedroom = request.FILES.get('file_picture_of_bedroom')
-    file_other_picture = request.FILES.get('file_other_picture')
+    else:
+        # Creation of a temporary house
+        house_to_update = House.objects.get_or_create(
+            owner=visitor,
+            city="",
+            nbr_n_street="",
+            message_of_presentation_of_house="",
+            is_available=True)
 
-    # Adding pictures to the house
+        house_to_update = visitor.list_of_houses.get(city="")
+        id_of_house_to_update = house_to_update.id
+
+    return house_to_update
+
+
+def _add_pictures_to_house_if_house_exists(
+        request,
+        house_to_update,
+        file_picture_front_of_house,
+        file_picture_of_bedroom,
+        file_other_picture):
+    """Adding pictures to the existing or temporary house if required fields are filled"""
+
+    are_required_fields_filled = False
+    if (house_to_update.capacity
+            and house_to_update.city
+            and house_to_update.zip
+            and house_to_update.nbr_n_street):
+
+        are_required_fields_filled = True
+
     nbr_of_uploaded_pictures = 0
-    if file_picture_front_of_house:
-                house_to_update.picture_front_of_house = file_picture_front_of_house
-                nbr_of_uploaded_pictures += 1
-    if file_picture_of_bedroom:
-                house_to_update.picture_of_bedroom = file_picture_of_bedroom
-                nbr_of_uploaded_pictures += 1
-    if file_other_picture:
-                house_to_update.other_picture = file_other_picture
-                nbr_of_uploaded_pictures += 1
+    if file_picture_front_of_house and are_required_fields_filled:
+        house_to_update.picture_front_of_house = file_picture_front_of_house
+        house_to_update.url_picture_front_of_house = (
+            settings.AWS_DOMAIN_NAME
+            + settings.PICTURES_FRONT_OF_HOUSES_DIRECTORY
+            + str(file_picture_front_of_house))
+        nbr_of_uploaded_pictures += 1
+        print()
+        print()
+        print("Url de l'image principale: ", house_to_update.url_picture_front_of_house)
+        print()
+
+    if file_picture_of_bedroom and are_required_fields_filled:
+        house_to_update.picture_of_bedroom = file_picture_of_bedroom
+        house_to_update.url_picture_of_bedroom = (
+            settings.AWS_DOMAIN_NAME
+            + settings.PICTURES_OF_BEDROOMS_DIRECTORY
+            + str(file_picture_of_bedroom))
+        nbr_of_uploaded_pictures += 1
+
+    if file_other_picture and are_required_fields_filled:
+        house_to_update.other_picture = file_other_picture
+        house_to_update.url_other_picture = (
+            settings.AWS_DOMAIN_NAME
+            + settings.OTHER_PICTURES_DIRECTORY
+            + str(file_other_picture))
+        nbr_of_uploaded_pictures += 1
 
     house_to_update.save()
     if nbr_of_uploaded_pictures == 1:
         messages.success(request, "La nouvelle photo a bien été enregistrée")
     if nbr_of_uploaded_pictures > 1:
         messages.success(request, "Les nouvelles photos ont bien été enregistrées")
+
+
+def create_or_update_house(request):
+    list(messages.get_messages(request))  # Clear all system messages
+    visitor = request.user
+    if not (visitor.is_authenticated and visitor.is_host):
+        return redirect('housing_home')
+
+    house_to_update = _get_or_create_house(request)
+
+    # Getting files (pictures) from the form
+    form = UploadFileForm(request.POST, request.FILES)  # Get the django form (where is upload system)
+    file_picture_front_of_house = request.FILES.get('file_picture_front_of_house')
+    file_picture_of_bedroom = request.FILES.get('file_picture_of_bedroom')
+    file_other_picture = request.FILES.get('file_other_picture')
+
+    # Adding pictures to the existing or temporary house if required fields are filled
+    _add_pictures_to_house_if_house_exists(
+        request,
+        house_to_update,
+        file_picture_front_of_house,
+        file_picture_of_bedroom,
+        file_other_picture)
 
     # Getting data from request
     capacity = request.POST.get('capacity', "")
@@ -102,7 +173,7 @@ def create_or_update_house(request):
         messages.error(request, "La capacité doit être un nombre entier !")
         return render(request,
                       "app_housing/create-or-update-house.html",
-                      context={"house": house_to_update})
+                      context={"house": house_to_update, "form": form})
 
     try:
         zip = int(zip) if zip else None
@@ -111,8 +182,7 @@ def create_or_update_house(request):
         messages.error(request, "Le code postal doit être un nombre entier !")
         return render(request,
                       "app_housing/create-or-update-house.html",
-                      context={"house": house_to_update})
-
+                      context={"house": house_to_update, "form": form})
 
     # If the required fields are filled
     if (capacity
@@ -143,29 +213,6 @@ def create_or_update_house(request):
 
             messages.success(request, "Les nouvelles informations ont bien été enregistrées")
             return redirect('housing_home')
-
-    # If the required fields are filled
-    if (capacity
-            and city
-            and zip
-            and nbr_n_street
-            and not house_to_update):  # If it's a new house
-
-        # Creation of the house
-        new_house = House(
-            owner=visitor,
-            capacity=capacity,
-            city=city,
-            zip=zip,
-            nbr_n_street=nbr_n_street,
-            # picture_front_of_house=None or picture_front_of_house,
-            picture_of_bedroom=None or picture_of_bedroom,
-            other_picture=None or other_picture,
-            message_of_presentation_of_house=(
-                    message_of_presentation_of_house),
-            is_available=is_available)
-        new_house.save()
-
 
     return render(request, "app_housing/create-or-update-house.html", context={"house": house_to_update, "form": form})
 

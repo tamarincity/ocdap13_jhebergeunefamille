@@ -1,34 +1,40 @@
 from typing import TypeVar
 
 from django.db import models
+from django.conf import settings
 
 from app_accounts.models import Member
 
+
 class House(models.Model):
-    capacity = models.IntegerField(default=1)
+    capacity = models.IntegerField(null=True, blank=True)
     owner = models.ForeignKey(
         Member, related_name="list_of_houses", on_delete=models.CASCADE)
 
     city = models.CharField(max_length=100, null=True, blank=True)
     nbr_n_street = models.CharField(max_length=100, null=True, blank=True)
-    zip = models.IntegerField()
+    zip = models.IntegerField(null=True, blank=True)
     picture_front_of_house = models.ImageField(
-        upload_to="pictures_front_of_house/",
+        upload_to=settings.PICTURES_FRONT_OF_HOUSES_DIRECTORY,
         blank=True,
         null=True,
         help_text="picture of the front of the house")
 
     picture_of_bedroom = models.ImageField(
-        upload_to="pictures_of_bedroom/",
+        upload_to=settings.PICTURES_OF_BEDROOMS_DIRECTORY,
         blank=True,
         null=True,
         help_text="picture of the bedroom")
 
     other_picture = models.ImageField(
-        upload_to="other_pictures/",
+        upload_to=settings.OTHER_PICTURES_DIRECTORY,
         blank=True,
         null=True,
         help_text="other picture of the house")
+
+    url_picture_front_of_house = models.TextField(default="", max_length=255, blank=True, null=True)
+    url_picture_of_bedroom = models.TextField(default="", max_length=255, blank=True, null=True)
+    url_other_picture = models.TextField(default="", max_length=255, blank=True, null=True)
 
     message_of_presentation_of_house = models.TextField(blank=True, null=True)
     is_available = models.BooleanField(default=True)

@@ -287,7 +287,6 @@ def test_complete_the_registration(monkeypatch):
     # Reset profile
     profile = copy.deepcopy(initial_profile)
 
-
     print("If no first_name is provided by the user then should alert "
           "'Un des champs requis n'est pas renseigné'")
     profile["first_name"] = ""
@@ -298,7 +297,6 @@ def test_complete_the_registration(monkeypatch):
 
     # Reset profile
     profile = copy.deepcopy(initial_profile)
-
 
     print("If no password is provided by the user then should alert "
           "'Un des champs requis n'est pas renseigné'")
@@ -430,7 +428,7 @@ def test_forgoten_pswd(monkeypatch):
 
     print("If the email is not registered then "
             "should redirect to the page 'app_accounts/new_pswd.html'")
-    print( "     because for security reasons, the user must not know "
+    print("     because for security reasons, the user must not know "
           "if this email is registered on the site.")
     response = client.post(
         '/accounts_forgoten_pswd',
@@ -471,7 +469,7 @@ def test_new_pswd(monkeypatch):
         password="old_p4SSw0rD",
         first_name="Jane",
         last_name="Calamity",)
-    
+
     utils.global_dict["R1ght_0TP"] = ['calamity@jane.com', otp_end_datetime]
 
     def mock_get_otp_n_pswd_from_request(request):

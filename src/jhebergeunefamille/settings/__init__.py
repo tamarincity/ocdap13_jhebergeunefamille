@@ -19,7 +19,6 @@ import environ
 import boto3
 
 
-
 env = environ.Env(DEBUG=(bool, False))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -42,12 +41,12 @@ ALLOWED_HOSTS = []
 
 # Django messages colors
 MESSAGE_TAGS = {
-        messages.DEBUG: 'alert-secondary',
-        messages.INFO: 'alert-info',
-        messages.SUCCESS: 'alert-success',
-        messages.WARNING: 'alert-warning',
-        messages.ERROR: 'alert-danger',
- }
+    messages.DEBUG: 'alert-secondary',
+    messages.INFO: 'alert-info',
+    messages.SUCCESS: 'alert-success',
+    messages.WARNING: 'alert-warning',
+    messages.ERROR: 'alert-danger',
+}
 
 # Logging ===================
 LOGGING = {
@@ -176,6 +175,11 @@ EMAIL_USE_TLS = env("EMAIL_USE_TLS", default=None)
 STATIC_ROOT = BASE_DIR / 'static'
 STATIC_URL = 'static/'
 
+# Folders of uploaded files
+PICTURES_FRONT_OF_HOUSES_DIRECTORY = 'pictures_front_of_house/'
+PICTURES_OF_BEDROOMS_DIRECTORY = 'pictures_of_bedrooms/'
+OTHER_PICTURES_DIRECTORY = 'other_pictures/'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
@@ -185,6 +189,7 @@ AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID', default=None)
 AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY', default=None)
 AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME', default=None)
 AWS_QUERYSTRING_AUTH = env('AWS_QUERYSTRING_AUTH', default=None)
+AWS_DOMAIN_NAME = env('AWS_DOMAIN_NAME', default=None)
 
 AWS_DEFAULT_ACL = None
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'

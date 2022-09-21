@@ -76,7 +76,7 @@ def forgoten_pswd(request):
                     minutes pour changer votre mot de passe.
                     Votre code (OTP) est : {otp_code}""")
 
-                if is_email_sent:= utils.send_email(email, email_content):
+                if is_email_sent := utils.send_email(email, email_content):
                     return redirect('accounts_new_pswd')
                 else:
                     messages.error(request, ("Une erreur inattendue est survenue !"))
@@ -84,7 +84,6 @@ def forgoten_pswd(request):
 
             except ObjectDoesNotExist:
                 return redirect('accounts_new_pswd')
-
 
     return render(request, "app_accounts/forgoten_pswd.html")
 

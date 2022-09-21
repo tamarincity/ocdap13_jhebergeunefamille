@@ -72,7 +72,7 @@
 
                             {% if user.is_host %}
                                 <li class="nav-item">
-                                    <a class="nav-link caramel-mou" id="get_fav" href="{% url 'housing_my_houses'  %}?user_id={{ user.id }}" title="Mes logements">
+                                    <a class="nav-link caramel-mou" id="get_fav" href="{% url 'housing_host_home'  %}?user_id={{ user.id }}" title="Mes logements">
                                         <img
                                         class="nav-img"
                                         src="static/images/abri.png"
