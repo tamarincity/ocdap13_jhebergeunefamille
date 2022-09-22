@@ -37,7 +37,7 @@
                     </button>
                 </a>
             </center>
-            <br/>
+            <br/><br/>
             {% for house in houses %}
                 <div class="card">
                     <div class="card-body flex-row space-between">
@@ -57,7 +57,7 @@
 
                             <!-- Address -->
                             <div class="line-height-250"><b>{{ house.city}}</b> </div>
-                            <div>{{ house.nbr_n_street }} ({{ house.zip }})</div>
+                            <div>{{ house.nbr_n_street }} ({{ house.zip_code }})</div>
                             <div class="line-height-250">Capacité: {{ house.capacity }} </div>
                             <div class="line-height-250">
                                 {% if house.url_picture_front_of_house %}

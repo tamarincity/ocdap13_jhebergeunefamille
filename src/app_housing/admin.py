@@ -10,7 +10,7 @@ class HouseAdmin(admin.ModelAdmin):
         "owner",
         "city",
         "nbr_n_street",
-        "zip",
+        "zip_code",
         "picture_front_of_house",
         "picture_of_bedroom",
         "other_picture",
