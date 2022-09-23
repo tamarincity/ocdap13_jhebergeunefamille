@@ -20,40 +20,43 @@
                 <hr class="divider" />
             </div>
             <div class="col-lg-8 align-self-baseline">
-                <button type="submit" class="btn btn-primary" style="left:-5px;">
+                <a href="accounts_login">
+                    <button type="submit" class="btn btn-primary" style="left:-5px;">
                     Je propose un logement
-                </button>
+                    </button>
+                </a>
                 <hr class="divider" />
                 <h2 class="text-white-75 mb-5">Je recherche un logement pour</h2>
 
                 <!-- search bar -->
-                <div class="input-group">
-                    <div class="center">
-                        <form action = "get-origial-product" method="get">
+                <form action = "housing_houses_or_cities" method="get">
+                    {% csrf_token %}
+                    <input type="hidden" name="what_to_find" value="cities" />
+                    <div class="input-group">
+                        <div class="center">
                             <center>
-                            <div class="form-outline">
-                                <input
-                                    id="search-nbr"
-                                    type="number"
-                                    min="1"
-                                    step="1"
-                                    name="keywords_of_original_product"
-                                    class="form-control"
-                                    placeholder="Ex: 2"
-                                    required />
-                            </div>
+                                <div class="form-outline">
+                                    <input
+                                        id="search-nbr"
+                                        type="number"
+                                        min="1"
+                                        step="1"
+                                        name="capacity"
+                                        class="form-control"
+                                        placeholder="Ex: 2"
+                                        required />
+                                </div>
                             </center>
-
-                        </form>
+                        </div>
                     </div>
-                </div>
-                <br />
-
-                <h2 class="text-white-75 mb-5">personne(s)</h2>
-                <button type="submit" class="btn btn-primary" style="left:-5px;">
-                    <i class="bi bi-search"></i>
-                </button>
-                <br /><br /><br />
+                    <br />
+                    <h2 class="text-white-75 mb-5">personne(s)</h2>
+                    <!-- Submit button -->
+                    <button type="submit" class="btn btn-primary" style="left:-5px;">
+                        <i class="bi bi-search"></i>
+                    </button>
+                    <br /><br /><br />
+                </form>
             </div>
         </div>
     </div>

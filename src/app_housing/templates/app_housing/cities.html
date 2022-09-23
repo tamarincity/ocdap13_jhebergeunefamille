@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<!-- Masthead-->
+<header class="masthead-h-25">
+    <div class="container px-4 px-lg-5 h-20">
+        <div class="row gx-4 gx-lg-5 h-20 align-items-center justify-content-center text-center">
+            <div class="col-lg-8 align-self-baseline">
+                <br/><br/><br/>
+                <h2 class="text-white-75 mb-5 margin-top-20">
+                    Villes avec des logements disponibles
+                </h2>
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert {{ message.tags }}" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</header>
+<br/><br/>
+
+<!-- List of houses -->
+<section>
+    <div class="row gx-4 gx-lg-5 justify-content-center mb-5">
+        <div class="col-lg-6">
+            <br/><br/>
+            <!-- Card of a city -->
+            {% for elt in elts %}
+                <a      class="primary-dark"
+                        href="housing_houses_or_cities?city={{ elt.city }}&capacity={{ capacity }}&what_to_find=houses"
+                        style="text-decoration: none" >
+
+                    <div class="card">
+                        <div class="card-body flex-row space-between">
+                            {{ elt.city }}<br/>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+            {% if not elts %}
+            <center>
+                <h3>Il n'y a pas de ville qui corresponde à votre demande</h3>
+            </center>
+                {% endif %}
+            <br />
+            <div class="flex-row">
+                <!-- Button Previous -->
+                <div class="flex-row half-size to-the-left">
+                    {% if is_previous %}
+                    &nbsp;&nbsp;
+                        <a href="houses_or_cities?capacity={{ capacity }}&from_id={{ previous_id }}&total_nbr_of_elements={{ total_nbr_of_elements }}&what_to_find=cities&city={{ city }}">
+                            <button>Précédent</button>
+                        </a>
+                    {% endif %}
+                </div>
+                <!-- Button Next -->
+                <div class="flex-row half-size to-the-right">
+                    {% if is_next %}
+                        <a href="houses_or_cities?capacity={{ capacity }}&from_id={{ from_id }}&total_nbr_of_elements={{ total_nbr_of_elements }}&what_to_find=cities&city={{ city }}">
+                            <button>Suivant</button>
+                        </a>
+                        &nbsp;&nbsp;
+                    {% endif %}
+                </div>
+            </div>
+
+            <center>
+                <a href="housing_home">
+                    <button class="primary-dark">Recommencer</button>
+                </a>
+            </center>
+
+
+        </div>
+    </div>
+
+</section>
+{% endblock %}

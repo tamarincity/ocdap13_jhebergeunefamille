@@ -1,0 +1,122 @@
+[
+{
+  "model": "app_accounts.member",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$390000$MW0zc1LgDsPdCjn1Kzipd8$3mvcrRJbvXBOuNDIBzan5jFPa3MmQfry3I5rHXVWayI=",
+    "last_login": null,
+    "is_superuser": true,
+    "username": "pascal",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2022-09-22T08:08:39.908Z",
+    "pseudo": "",
+    "phone": "",
+    "message_of_presentation": "",
+    "is_host": false,
+    "is_removed": false,
+    "groups": [],
+    "user_permissions": [],
+    "hosts": []
+  }
+},
+{
+  "model": "app_accounts.member",
+  "pk": 2,
+  "fields": {
+    "password": "pbkdf2_sha256$390000$G0qnCz1dgyVgcUVVXDmiN8$sruBIwFwCMqXwoMZim07Iy9trnzWOCEQDRtf8lcwkFA=",
+    "last_login": "2022-09-19T07:47:00.222Z",
+    "is_superuser": false,
+    "username": "mimi@yopmail.com",
+    "first_name": "Michelle",
+    "last_name": "",
+    "email": "mimi@yopmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2022-09-19T07:47:00.139Z",
+    "pseudo": "mimi",
+    "phone": "0123456789",
+    "message_of_presentation": "Je suis Mimi toute mignone",
+    "is_host": false,
+    "is_removed": false,
+    "groups": [],
+    "user_permissions": [],
+    "hosts": []
+  }
+},
+{
+  "model": "app_accounts.member",
+  "pk": 3,
+  "fields": {
+    "password": "pbkdf2_sha256$390000$5HFKHzjf56VHvIbLcrO5Yy$rt+YBQ6lJZHuCeSFRbr8+cB21whet6qkmwXBQyTJigY=",
+    "last_login": "2022-09-22T19:17:45.833Z",
+    "is_superuser": false,
+    "username": "vivi@yopmail.com",
+    "first_name": "Victor",
+    "last_name": "",
+    "email": "vivi@yopmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2022-09-19T07:50:25.937Z",
+    "pseudo": "Vivi",
+    "phone": "5555555555",
+    "message_of_presentation": "Je suis le proprio Victor",
+    "is_host": true,
+    "is_removed": false,
+    "groups": [],
+    "user_permissions": [],
+    "hosts": []
+  }
+},
+{
+  "model": "app_accounts.member",
+  "pk": 4,
+  "fields": {
+    "password": "pbkdf2_sha256$390000$73zmaC9HAZivdYS6IhhNIq$1XCZhcqmUYPAsAT8EpDHvCU883KUBAJ7CxxN6My2ICo=",
+    "last_login": "2022-09-22T20:50:11.240Z",
+    "is_superuser": false,
+    "username": "qjqj@yopmail.com",
+    "first_name": "Jean Jacques",
+    "last_name": "GOLDBOY",
+    "email": "qjqj@yopmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2022-09-17T13:22:01.782Z",
+    "pseudo": "JJ",
+    "phone": "",
+    "message_of_presentation": "Je suis jj Goldboy",
+    "is_host": true,
+    "is_removed": false,
+    "groups": [],
+    "user_permissions": [],
+    "hosts": []
+  }
+},
+{
+  "model": "app_accounts.member",
+  "pk": 5,
+  "fields": {
+    "password": "pbkdf2_sha256$390000$3tHMcjkoYeXk7avwuZ4pHl$St4zrXtJeTFSuP0fG83Fv2awfIji/+ImnDAITbc6/w0=",
+    "last_login": "2022-09-22T20:55:07.848Z",
+    "is_superuser": false,
+    "username": "fr@yopmail.com",
+    "first_name": "France",
+    "last_name": "",
+    "email": "fr@yopmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2022-09-22T20:55:07.768Z",
+    "pseudo": "Francia",
+    "phone": "",
+    "message_of_presentation": "Je vais bien",
+    "is_host": true,
+    "is_removed": false,
+    "groups": [],
+    "user_permissions": [],
+    "hosts": []
+  }
+}
+]

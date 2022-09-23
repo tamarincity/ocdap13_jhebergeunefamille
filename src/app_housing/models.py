@@ -5,7 +5,14 @@ from django.db import models
 from django.conf import settings
 from django.contrib import messages
 
+from icecream import ic
+
 from app_accounts.models import Member
+from utils import utils
+from app_housing.constants import (
+    CAPACITY_KEY,
+    NBR_MAX_OF_ELEMENTS_TO_DISPLAY,
+)
 
 
 class House(models.Model):
@@ -96,13 +103,13 @@ class House(models.Model):
 
         are_required_fields_filled = False
         if ((house_to_update.capacity
-                and house_to_update.city
-                and house_to_update.zip_code
-                and house_to_update.nbr_n_street)
-            or capacity
-            or city
-            or zip_code
-            or nbr_n_street):
+                    and house_to_update.city
+                    and house_to_update.zip_code
+                    and house_to_update.nbr_n_street)
+                or capacity
+                or city
+                or zip_code
+                or nbr_n_street):
 
             are_required_fields_filled = True
 
@@ -176,13 +183,109 @@ class House(models.Model):
         return True
 
     @classmethod
-    def remove_house(cls, house_id: int):
+    def remove_house(cls, request):
+        visitor = request.user
+        if id_of_house_to_remove := request.POST.get('id_of_house_to_remove', ""):
+            try:
+                house_to_remove = visitor.list_of_houses.get(id=id_of_house_to_remove)
+                house_to_remove.is_removed = True
+                house_to_remove.save()
+                messages.success(request, "Le logement a été supprimé")
+            except Exception as e:
+                logging.error("Couldn't find house to remove from the houses of the visitor")
+                messages.error(
+                    request,
+                    ("Une erreur inattendue est arrivée ! Contactez les développeurs."))
         return True
 
     @classmethod
-    def get_cities_by_capacity(capacity: int):
-        return True
+    def get_elements_by_capacity(
+            cls,
+            capacity: int,
+            from_id: int,
+            what_to_find: str,
+            total_nbr_of_elements=0,
+            city="Mp3gqSe85d2sXXu_kj256Gr_00amdihq 2ncgkq43") -> tuple[list[str], int]:
+
+        """Get the cities or the houses where there are available hosts that has a capacity
+    equals or greater than the one in argument."""
+
+        print()
+        print("capacity: ", capacity)
+        print("from_id: ", from_id)
+        print("Total number of elements:", total_nbr_of_elements)
+        print("what_to_find:", what_to_find)
+        elts = []
+
+        # Get the total number of corresponding cities
+        if not total_nbr_of_elements and what_to_find == "cities":
+            ic()
+            total_nbr_of_elements = (House.objects.all()
+                                        .filter(capacity__gte=capacity)
+                                        .filter(is_available=True)
+                                        .filter(is_removed=False)
+                                        .exclude(city="")
+                                        .exclude(nbr_n_street="")
+                                        .exclude(zip_code=0)
+                                        .values('city')
+                                        .distinct()
+                                        .order_by("city")).count()
+
+        # Get the total number of corresponding houses
+        if not total_nbr_of_elements and what_to_find == "houses":
+            ic()
+            total_nbr_of_elements = (House.objects.all()
+                                        .filter(capacity__gte=capacity)
+                                        .filter(is_available=True)
+                                        .filter(is_removed=False)
+                                        .filter(city=city)
+                                        .exclude(nbr_n_street="")
+                                        .exclude(zip_code=0)
+                                        .values_list('id', 'capacity', flat=False)
+                                        .order_by("capacity")).count()
+
+        to_id = from_id + NBR_MAX_OF_ELEMENTS_TO_DISPLAY
+        if to_id > total_nbr_of_elements:
+            print("Fin de liste atteinte")
+            to_id = total_nbr_of_elements
+
+        print("to_id: ", to_id)
+
+        # Get the list of cities
+        if what_to_find == "cities":
+            elts = (House.objects.all()
+                    .filter(capacity__gte=capacity)
+                    .filter(is_available=True)
+                    .filter(is_removed=False)
+                    .exclude(city="")
+                    .exclude(nbr_n_street="")
+                    .exclude(zip_code=0)
+                    .values('city')
+                    .distinct()
+                    .order_by("city")[from_id:to_id])
+
+        # Get the list of houses
+        if what_to_find == "houses":
+            elts = (House.objects.all()
+                    .filter(capacity__gte=capacity)
+                    .filter(is_available=True)
+                    .filter(is_removed=False)
+                    .filter(city=city)
+                    .exclude(nbr_n_street="")
+                    .exclude(zip_code=0)
+                    .values_list('id', 'capacity', flat=False)
+                    .order_by("capacity")[from_id:to_id])
+
+        print("Elements returned by model: ", elts)
+        print("Total number of elements in database:", total_nbr_of_elements)
+        print()
+        return elts, total_nbr_of_elements
 
     @classmethod
-    def get_id_n_capacity_by_capacity_n_city(capacity_gte_than: int, city: str):
-        return True
+    def get_house_by_id(cls, id: int):
+        try:
+            return House.objects.get(id=id)
+        except Exception as e:
+            logging.error("Error: unable to get house by ID")
+            logging.error(str(e))
+        return None
