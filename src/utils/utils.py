@@ -5,6 +5,7 @@ from typing import Any
 
 from django.conf import settings
 from django.core.mail import send_mail
+from django.contrib import messages
 
 from .constants import (
     ALPHABET_N_NUMBERS,
@@ -73,12 +74,10 @@ def remove_unvalid_otp_from_global_dict():
         del global_dict[key]
 
 
-def send_email(email: str, message: str) -> bool:
-    """Send OTP and its validity duration via email"""
+def send_email(email: str, subject: str, message: str) -> bool:
+    """Send email"""
 
     recipient = email
-
-    subject = "jhebergeunefamille: Votre code OTP"
 
     try:
         send_mail(
@@ -93,3 +92,34 @@ def send_email(email: str, message: str) -> bool:
         return False
 
     return True
+
+
+def send_email_to_owner_if_requested(request, Member) -> None:
+    """Allows the person in need to send an email to the owner of an accomodation
+    if some args are provided"""
+
+    message_to_owner = request.POST.get('message_to_owner', "")
+    owner_id = request.POST.get('owner_id', "")
+    in_need_email = request.POST.get('in_need_email', "")
+
+    if message_to_owner and owner_id and in_need_email:
+
+        # Get the recipient
+        owner = Member.objects.get(id=owner_id)
+
+        # Create the email
+        subject = "jhebergeunefamille: Une personne dans le besoin vous contacte"
+        header_message = f"""
+        Bonjour {owner.first_name} ({owner.pseudo}),
+
+        Cet email vous a été envoyé par {in_need_email} via l'application jhebergeunefamille.app.
+
+        """
+
+        email_content = header_message + message_to_owner
+        if not send_email(owner.email, subject, email_content):
+            messages.error(request, "Une erreur est survenue lors de l'envoi de l'email")
+        else:
+            messages.success(request, "Le message a bien été envoyé")
+
+    return

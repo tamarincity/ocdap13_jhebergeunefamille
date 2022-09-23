@@ -4,13 +4,14 @@ from datetime import datetime
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from django.urls import reverse
-from app_accounts.models import Member
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.conf import settings
 
 from icecream import ic
 import environ
 
+from app_accounts.models import Member
 from app_housing.models import House
 from app_housing.forms import UploadFileForm
 from utils import utils
@@ -193,12 +194,20 @@ def get_all_elements_with_available_rooms(request):
     return redirect('housing_home')
 
 
+
+
+@login_required
 def get_house_details(request):
-    """Get details of a house"""
+    """Get details of a house
+    and allows the person in need to send an email to the owner of the house"""
 
-    if id := request.GET.get('id', ""):
+    utils.send_email_to_owner_if_requested(request, Member)
+    Member.add_to_contacts_if_requested(request, Member)
 
-        if house := House.get_house_by_id(id):
+
+    if house_id := request.GET.get('id', ""):
+
+        if house := House.get_house_by_id(house_id):
             return render(
                 request,
                 "app_housing/house-details.html",

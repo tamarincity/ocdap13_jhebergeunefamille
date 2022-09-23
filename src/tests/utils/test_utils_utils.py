@@ -91,11 +91,11 @@ def test_send_email(monkeypatch):
 
     print("If the email of the recipient is malformed "
             "then should return False because no email can be sent")
-    assert send_email("wrong@email", "this_is_the_OTP_code") == False
+    assert send_email("wrong@email", "the subject", "this_is_the_OTP_code") == False
 
     print("If the email of the recipient is properly formed "
             "then should return True because the email has been sent")
-    assert send_email("good@email.com", "this_is_the_OTP_code") == True
+    assert send_email("good@email.com", "the subject", "this_is_the_OTP_code") == True
 
 
 def test_add_in_global_dict():

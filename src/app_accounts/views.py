@@ -69,6 +69,7 @@ def forgoten_pswd(request):
 
                 # Store OTP, email and OTP validity datetime in global_dict
                 utils.add_in_global_dict(otp_code, [email, otp_validity_end_datetime])
+                subject = "jhebergeunefamille: Votre code OTP"
                 email_content = (
                     f"""
                     Bonjour, vous avez moins de {OTP_VALIDITY_DURATION_IN_MINUTE} """
@@ -76,7 +77,7 @@ def forgoten_pswd(request):
                     minutes pour changer votre mot de passe.
                     Votre code (OTP) est : {otp_code}""")
 
-                if is_email_sent := utils.send_email(email, email_content):
+                if is_email_sent := utils.send_email(email, subject, email_content):
                     return redirect('accounts_new_pswd')
                 else:
                     messages.error(request, ("Une erreur inattendue est survenue !"))
@@ -236,9 +237,10 @@ def signup_user(request):
         # Store OTP, email and OTP validity datetime in global_dict
         utils.add_in_global_dict(otp_code, [username, otp_validity_end_datetime])
         # Send OTP by email
+        subject = "jhebergeunefamille: Votre code OTP"
         email_content = (f"Bonjour, vous avez {OTP_VALIDITY_DURATION_IN_MINUTE} minutes "
                             f"pour compléter votre enregistrement. Votre code OTP est: {otp_code}")
-        is_email_sent = utils.send_email(username, email_content)
+        is_email_sent = utils.send_email(username, subject, email_content)
 
         if not is_email_sent:
             time.sleep(random.randint(1, 5))

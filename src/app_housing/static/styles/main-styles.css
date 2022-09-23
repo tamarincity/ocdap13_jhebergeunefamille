@@ -349,7 +349,6 @@ header.masthead-h-25 {
 }
 
 .background-photo-intro {
-  
   background: url("../images/background-intro.jpg");
   /* background: linear-gradient(to bottom, rgba(92, 77, 66, 0.8) 0%, rgba(92, 77, 66, 0.8) 20%), url("../images/background-intro.jpg"); */
   background-repeat: no-repeat;
@@ -358,6 +357,11 @@ header.masthead-h-25 {
   background-position: center;
   /* background-position: 25% 75%; */
   background-size: 150%;
+}
+
+.margin-side-10 {
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 .layer-on-photo {

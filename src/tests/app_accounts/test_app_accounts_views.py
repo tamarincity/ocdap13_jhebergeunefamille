@@ -180,7 +180,7 @@ def test_signup_user(monkeypatch, add_member_to_db):
                 return True
         return False
 
-    def mock_utils_send_email(email, email_content):
+    def mock_utils_send_email(email, subject, email_content):
         if email == "email@failed.com":
             return False
         return True
@@ -388,7 +388,7 @@ def test_forgoten_pswd(monkeypatch):
     def mock_create_otp():
         return "I_4m_the_0TP", otp_end_datetime
 
-    def mock_send_email(email: str, email_content: str) -> None:
+    def mock_send_email(email: str, subject, email_content: str) -> None:
         if "must_fail" in email:
             return False
         return True

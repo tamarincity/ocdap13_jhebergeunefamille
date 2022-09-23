@@ -32,16 +32,38 @@
             <br/><br/>
             <!-- Card of a house -->
             {% for elt in elts %}
-                <a class="primary-dark" href="housing_house-details?id={{ elt.0 }}" style="text-decoration: none" >
+                {% if user.is_authenticated %}
+                    <a class="primary-dark" href="housing_house-details?id={{ elt.0 }}" style="text-decoration: none" >
+                        <div class="card">
+                            <div class="card-body flex-row space-between">
+                                <div class="green-color" style="line-height: 250%">
+                                    <img src="static/images/house_002_green.png" alt="Contour d'une maison en vert" title="Disponible" width="80rem" /><br/>
+                                </div>
+                                Réf. : {{ elt.0 }}<br/>Peut accueillir<br/>{{ elt.1 }}&nbsp;{% if elt.1 > 1 %}personnes{% else %}personne{% endif %}<br/>
+                            </div>
+                        </div>
+                    </a>
+                {% else %}
                     <div class="card">
                         <div class="card-body flex-row space-between">
                             <div class="green-color" style="line-height: 250%">
                                 <img src="static/images/house_002_green.png" alt="Contour d'une maison en vert" title="Disponible" width="80rem" /><br/>
                             </div>
-                            Réf. : {{ elt.0 }}<br/>Peut accueillir<br/>{{ elt.1 }} {% if elt.1 > 1 %}personnes{% else %}personne{% endif %}<br/>
+                            Réf. : {{ elt.0 }}<br/>Peut accueillir<br/>{{ elt.1 }}&nbsp;{% if elt.1 > 1 %}personnes{% else %}personne{% endif %}<br/>
+                            <div class="flex-column">
+                                <span class="text-danger">Vous devez être connecté pour en savoir plus</span>
+                                <center>
+                                    <a class="nav-link primary-dark" id="login" href="{% url 'accounts_login' %}">
+                                        Se connecter
+                                    </a>
+                                    <a class="nav-link primary-dark" id="login" href="{% url 'accounts_signup' %}">
+                                        S'inscrire
+                                    </a>
+                                </center>
+                            </div>
                         </div>
                     </div>
-                </a>
+                {% endif %}
             {% endfor %}
             {% if not elts %}
             <center>
