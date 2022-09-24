@@ -229,7 +229,7 @@ def test_signup_user(monkeypatch, add_member_to_db):
         '/accounts_signup',
         {"username": "email@failed.com"},
         follow=True)
-    assert (response.redirect_chain[0][0] == "/accounts_complete_the_registration")
+    assert (response.redirect_chain[0][0] == "/accounts_complete_the_registration?provenance=")
 
     print("If user is not already registered then "
             "should redirect to the 'complete_the_registration' page")
@@ -237,7 +237,7 @@ def test_signup_user(monkeypatch, add_member_to_db):
         '/accounts_signup',
         {"username": "new@user.fr"},
         follow=True)
-    assert (response.redirect_chain[0][0] == "/accounts_complete_the_registration")
+    assert (response.redirect_chain[0][0] == "/accounts_complete_the_registration?provenance=")
 
 
 @pytest.mark.integration_test

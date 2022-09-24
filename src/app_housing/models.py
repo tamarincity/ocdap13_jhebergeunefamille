@@ -15,6 +15,22 @@ from app_housing.constants import (
 )
 
 
+class ReceivedMessage(models.Model):
+    datetime = models.DateTimeField(auto_now_add=True)
+    is_already_read = models.BooleanField(default=False)
+    firstname = models.CharField(max_length=255)
+    lastname = models.CharField(max_length=255)
+    email = models.EmailField(max_length=255)
+    phone_number = models.CharField(max_length=255)
+    message = models.TextField()
+
+    class Meta:
+        ordering = ["datetime"]
+
+    def __str__(self):
+        return f"{str(self.datetime)[:16]} - {self.email}"
+
+
 class House(models.Model):
     capacity = models.IntegerField(null=True, blank=True)
     owner = models.ForeignKey(

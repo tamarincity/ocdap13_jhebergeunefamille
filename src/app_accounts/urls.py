@@ -21,4 +21,6 @@ urlpatterns = [
     path('complete_the_registration',
          views.complete_the_registration,
          name='accounts_complete_the_registration'),
+    # Route for a person in need to get the list of his contacts
+    path('my-contacts', views.get_my_contacts, name='accounts_my_contacts'),
 ]

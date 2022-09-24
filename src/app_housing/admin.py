@@ -1,6 +1,11 @@
 from django.contrib import admin
 
-from app_housing.models import House
+from app_housing.models import House, ReceivedMessage
+
+
+class ReceivedMessageAdmin(admin.ModelAdmin):
+    readonly_fields = [field.name for field in ReceivedMessage._meta.fields if field.name != "is_already_read"]
+    list_filter = ('is_already_read', 'datetime')
 
 
 class HouseAdmin(admin.ModelAdmin):

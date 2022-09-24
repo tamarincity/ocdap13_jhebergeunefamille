@@ -20,6 +20,8 @@
 
                 <form id="loginForm" method="post" action="#" > <!-- action="#" => same file -->
                     {% csrf_token %}
+                    <!-- Provenance input -->
+                    <input type="hidden" name="provenance" value="{{ provenance }}"/>
                     <!-- Email address input-->
                     <div class="form-floating mb-3">
                         <input class="form-control" id="username" type="email" placeholder="un@exemple.com" name="username" required />

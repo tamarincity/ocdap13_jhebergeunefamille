@@ -123,3 +123,22 @@ def send_email_to_owner_if_requested(request, Member) -> None:
             messages.success(request, "Le message a bien été envoyé")
 
     return
+
+
+def get_provenance(request) -> str:
+    """Return (as a string) the provenance of the user if it has been sent via GET or POST request
+    The parameter name in the request must be "provenance".
+    Ex: provenance = "my-uri?param1=yes&param2=black&param3=fast" """
+
+    uri_n_first_param = (
+        request.GET.get('provenance', "")
+        or request.POST.get('provenance', "?=").split("?"))
+
+    provenance = (
+        str(uri_n_first_param)
+        + "".join(f"&{key}={value}" for key, value in request.GET.items() if not key == "provenance"))
+
+    if provenance in ["['', '=']", "['']"]:
+        provenance = ""
+
+    return provenance

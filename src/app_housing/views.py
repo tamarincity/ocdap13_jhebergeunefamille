@@ -12,11 +12,10 @@ from icecream import ic
 import environ
 
 from app_accounts.models import Member
-from app_housing.models import House
+from app_housing.models import House, ReceivedMessage
 from app_housing.forms import UploadFileForm
 from utils import utils
 from app_housing.constants import (
-    CAPACITY_KEY,
     NBR_MAX_OF_ELEMENTS_TO_DISPLAY,
 )
 
@@ -138,11 +137,8 @@ def get_all_elements_with_available_rooms(request):
     """Get the cities where there are available hosts that has a capacity
     equals or greater than the one in argument."""
 
-    print()
-    ic()
     what_to_find = request.GET.get('what_to_find', "")
     city = request.GET.get('city', None)
-    print("what_to_find: ", what_to_find)
 
     try:
         from_id = int(request.GET.get('from_id', 0))
@@ -175,10 +171,6 @@ def get_all_elements_with_available_rooms(request):
         if from_id - NBR_MAX_OF_ELEMENTS_TO_DISPLAY > 0:
             is_previous = True
 
-        print("*** elts ***")
-        for elt in elts:
-            print(elt)
-
         return render(
             request,
             f"app_housing/{what_to_find}.html",
@@ -194,8 +186,6 @@ def get_all_elements_with_available_rooms(request):
     return redirect('housing_home')
 
 
-
-
 @login_required
 def get_house_details(request):
     """Get details of a house
@@ -203,7 +193,6 @@ def get_house_details(request):
 
     utils.send_email_to_owner_if_requested(request, Member)
     Member.add_to_contacts_if_requested(request, Member)
-
 
     if house_id := request.GET.get('id', ""):
 
@@ -216,37 +205,78 @@ def get_house_details(request):
     return redirect(request.META.get('HTTP_REFERER', '/'))
 
 
-def add_to_contacts(request):
-    return HttpResponse("add_to_contacts is coming soon")
-
-
 def contact(request):
-    return HttpResponse("contact is coming soon")
+    return render(request, "app_housing/contact.html")
 
 
-def details(request):
-    return HttpResponse("details is coming soon")
+def get_message_to_developer(request):
+    """Get message to developer from form to database."""
 
+    list(messages.get_messages(request))  # Clear all system messages
 
-def get_my_houses(request):
-    return HttpResponse("get_my_houses is coming soon")
+    firstname = request.POST.get("firstname", "")
+    lastname = request.POST.get("lastname", "")
+    email = request.POST.get("email", "")
+    phone_number = request.POST.get("phone_number", "")
+    message = request.POST.get("message", "")
 
+    context = {
+        "firstname": firstname,
+        "lastname": lastname,
+        "email": email,
+        "phone_number": phone_number,
+        "message": message,
+    }
 
-def get_my_contacts(request):
-    return HttpResponse("get_my_contacts is coming soon")
+    is_email_well_formed = utils.check_email_validity(email)
+    if not is_email_well_formed:
+        messages.success(request, ("Le champ email est incorrect !"))
+        return render(request, "app_housing/contact.html", context)
 
+    if not (
+        firstname
+        and lastname
+        and email
+        and phone_number
+        and message
+        and isinstance(firstname, str)
+        and isinstance(lastname, str)
+        and isinstance(email, str)
+        and isinstance(phone_number, str)
+        and isinstance(message, str)
+    ):
 
-def get_message(request):
-    return HttpResponse("get_message is coming soon")
+        messages.success(request, ("Tous les champs doivent être remplis !"))
+        return render(request, "app_housing/contact.html", context)
 
+    try:
+        ReceivedMessage.objects.create(
+            firstname=firstname,
+            lastname=lastname,
+            email=email,
+            phone_number=phone_number,
+            message=message,
+        )
 
-def get_origial_product(request):
-    return HttpResponse("get_origial_product is coming soon")
+        messages.success(
+            request,
+            (
+                "Votre message a bien été reçu. :)"
+            ),
+        )
+    except Exception as e:
+        logging.error(f"Unable to add the customer. Reason: {str(e)}")
+        messages.error(
+            request,
+            (
+                "Malheureusement, une erreur du système est survenue. "
+                "Le message n'a pas pu être reçu !"
+                " Veuillez ré-essayer plus tard. Merci"
+            ),
+        )
 
-
-def get_substitutes(request):
-    return HttpResponse("get_substitutes is coming soon")
+    return render(request, "app_housing/message-received.html")
 
 
 def legal_notice(request):
-    return HttpResponse("legal_notice is coming soon")
+    return render(request, "app_housing/legal-notice.html")

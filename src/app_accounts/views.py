@@ -5,10 +5,12 @@ import logging
 
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth import get_user_model, login, logout, authenticate
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.decorators import login_required
 
 from icecream import ic
 
@@ -90,7 +92,12 @@ def forgoten_pswd(request):
 
 
 def login_user(request):
+    """Login the user"""
     list(messages.get_messages(request))  # Clear all system messages
+
+    # Get provenance of the user according of the value of the
+    # param named "provenance" sent in a POST or GET request
+    provenance = utils.get_provenance(request)
 
     if request.method == 'POST':
         username, password = _get_credentials(request)
@@ -104,11 +111,15 @@ def login_user(request):
         if user:
             login(request, user)
             messages.success(request, ("Bienvenue, vous êtes connecté !"))
-            return redirect('housing_home')
+            destination = provenance or 'housing_home'
+            return redirect(destination)
 
         messages.error(request, ("Identifiants incorrects !"))
 
-    return render(request, "app_accounts/login.html")
+    return render(
+        request,
+        "app_accounts/login.html",
+        context={"provenance": provenance} if provenance else None)
 
 
 def logout_user(request):
@@ -211,6 +222,10 @@ def profile(request):
 def signup_user(request):
     list(messages.get_messages(request))  # Clear all system messages
 
+    # Get provenance of the user according of the value of the
+    # param named "provenance" sent in a POST or GET request
+    provenance = utils.get_provenance(request)
+
     if request.method == 'POST':  # Request via the form
         username, _ = _get_credentials(request)  # username = email
 
@@ -246,9 +261,9 @@ def signup_user(request):
             time.sleep(random.randint(1, 5))
 
         messages.success(request, ("Un e-mail contenant votre code (OTP) vous a été envoyé !"))
-        return redirect('accounts_complete_the_registration')
+        return redirect(reverse('accounts_complete_the_registration') + f"?provenance={provenance}")
 
-    return render(request, "app_accounts/signup.html")
+    return render(request, "app_accounts/signup.html", context={"provenance": provenance})
 
 
 def complete_the_registration(request):
@@ -258,6 +273,10 @@ def complete_the_registration(request):
     This function displays and manages the registration form."""
 
     list(messages.get_messages(request))  # Clear all system messages
+
+    # Get provenance of the user according of the value of the
+    # param named "provenance" sent in a POST or GET request
+    provenance = utils.get_provenance(request)
 
     data_from_form = {
         "otp": request.POST.get('otp', ''),
@@ -318,10 +337,35 @@ def complete_the_registration(request):
             # User connection
             login(request, user)
             messages.success(request, ("Bienvenue, vous êtes connecté !"))
-            return redirect('housing_home')
+            destination = provenance or 'housing_home'
+
+            return redirect(destination)
 
         except Exception as e:
             logging.error("Unable to create the user or to log the user in.)")
             logging.error(str(e))
 
     return render(request, 'app_accounts/complete_the_registration.html', context=data_from_form)
+
+
+@login_required
+def get_my_contacts(request):
+    """Get the list of contacts of the user in need of housing.
+    Allows the in need person to send a message to the owner."""
+
+    utils.send_email_to_owner_if_requested(request, Member)
+
+    try:
+        contacts = request.user.hosts.all()
+        print("CONTACTS")
+        for my_contact in contacts:
+            print(my_contact.id)
+            print()
+    except Exception as e:
+        logging.info("Unable to get the list of contacts")
+        logging.info(str(e))
+        contacts = None
+    return render(
+                request,
+                "app_accounts/get-my-contacts.html",
+                context={"contacts": contacts})

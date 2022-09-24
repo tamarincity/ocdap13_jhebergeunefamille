@@ -53,10 +53,10 @@
                             <div class="flex-column">
                                 <span class="text-danger">Vous devez être connecté pour en savoir plus</span>
                                 <center>
-                                    <a class="nav-link primary-dark" id="login" href="{% url 'accounts_login' %}">
+                                    <a class="nav-link primary-dark" id="login" href="{% url 'accounts_login' %}?provenance={{ request.get_full_path }}">
                                         Se connecter
                                     </a>
-                                    <a class="nav-link primary-dark" id="login" href="{% url 'accounts_signup' %}">
+                                    <a class="nav-link primary-dark" id="login" href="{% url 'accounts_signup' %}?provenance={{ request.get_full_path }}">
                                         S'inscrire
                                     </a>
                                 </center>
