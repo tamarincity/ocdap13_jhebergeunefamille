@@ -25,4 +25,5 @@ class HouseAdmin(admin.ModelAdmin):
 
 
 # Usage
+admin.site.register(ReceivedMessage, ReceivedMessageAdmin)
 admin.site.register(House, HouseAdmin)

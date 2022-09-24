@@ -25,7 +25,7 @@ class ReceivedMessage(models.Model):
     message = models.TextField()
 
     class Meta:
-        ordering = ["datetime"]
+        ordering = ("-datetime", )  # sign (-) = desceding
 
     def __str__(self):
         return f"{str(self.datetime)[:16]} - {self.email}"
