@@ -80,7 +80,6 @@ class House(models.Model):
 
         # Get the id of the house to update from the request
         if id_of_house_to_update := request.POST.get('id_of_house_to_update', ""):
-            print("id of house to update: ", id_of_house_to_update)
             try:
                 # Get the involved house from the database
                 house_to_update = visitor.list_of_houses.get(id=id_of_house_to_update)
@@ -88,6 +87,7 @@ class House(models.Model):
                 logging.error("Couldn't find house to update from the houses of the visitor")
                 logging.error(str(e))
                 messages.error(request, ("Une erreur inattendue est arrivée ! Contactez les développeurs."))
+                house_to_update = None
 
         else:
             # Creation of a temporary house

@@ -94,7 +94,7 @@ def send_email(email: str, subject: str, message: str) -> bool:
     return True
 
 
-def send_email_to_owner_if_requested(request, Member) -> None:
+def send_email_to_owner_if_requested(request, Member) -> bool|None:
     """Allows the person in need to send an email to the owner of an accomodation
     if some args are provided"""
 
@@ -119,8 +119,10 @@ def send_email_to_owner_if_requested(request, Member) -> None:
         email_content = header_message + message_to_owner
         if not send_email(owner.email, subject, email_content):
             messages.error(request, "Une erreur est survenue lors de l'envoi de l'email")
+            return False
         else:
             messages.success(request, "Le message a bien été envoyé")
+            return True
 
     return
 

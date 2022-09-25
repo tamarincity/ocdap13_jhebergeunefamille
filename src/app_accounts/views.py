@@ -357,10 +357,6 @@ def get_my_contacts(request):
 
     try:
         contacts = request.user.hosts.all()
-        print("CONTACTS")
-        for my_contact in contacts:
-            print(my_contact.id)
-            print()
     except Exception as e:
         logging.info("Unable to get the list of contacts")
         logging.info(str(e))

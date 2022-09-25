@@ -14,8 +14,6 @@ from app_accounts.models import Member
 from app_accounts.views import (
     _get_credentials,
     _get_otp_n_pswd_from_request,
-    # check_email_validity,
-    # create_otp,
 )
 from app_accounts.constants import OTP_VALIDITY_DURATION_IN_MINUTE
 
@@ -27,6 +25,7 @@ pytestmark = pytest.mark.django_db
 
 credentials = {
                 "username": "toto@email.fr",
+                "pseudo": "Latêtatoto",
                 "first_name": "Toto",
                 "last_name": "DUPONT",
                 "email": "toto@email.fr",
@@ -55,10 +54,20 @@ class MockRequest:
 @pytest.fixture
 def add_member_to_db():
     return Member.objects.create_user(
+                pseudo=credentials["pseudo"],
                 username=credentials["username"],
                 first_name=credentials["first_name"],
                 password=credentials["password"],
                 email=credentials["username"])
+
+@pytest.fixture
+def add_visitor_to_db():
+    return Member.objects.create_user(
+                pseudo="V-Lezard",
+                username="visi@go.fr",
+                first_name="Visigoth",
+                password="12345678",
+                email="visi@go.fr")
 
 
 @pytest.fixture
@@ -455,7 +464,6 @@ def test_forgoten_pswd(monkeypatch):
     assert (response.redirect_chain[0][0] == "/accounts_new_pswd")  # Because follow=True
 
 
-@pytest.mark.test_me
 @pytest.mark.integration_test
 def test_new_pswd(monkeypatch):
 
@@ -502,10 +510,6 @@ def test_new_pswd(monkeypatch):
         "/accounts_new_pswd",
         {"otp": "R1ght_0TP", "password": "N3w_passw0rd"},
         follow=True)  # To follow the redirection
-    print("=======================================")
-    print("response.content")
-    print(response.content)
-    print()
     assertTemplateUsed(response, 'app_housing/home.html')
     assert (response.redirect_chain[0][0] == "/")  # Because follow=True
 
@@ -519,3 +523,41 @@ def test_new_pswd(monkeypatch):
     print("     should display the link to logout because "
             "the user is automatically logged in")
     assert "logout" in str(response.content)
+
+@pytest.mark.integration_test
+def test_get_my_contacts(monkeypatch, add_member_to_db, add_visitor_to_db):
+
+    owner = Member.objects.create_user(
+                pseudo="GI Joe",
+                username="gi@joe.com",
+                first_name="Joe",
+                password="12345678",
+                email="gi@joe.com")
+
+    visitor = add_visitor_to_db
+
+    visitor.hosts.add(owner)  # Add owner in visitor's contact
+
+    class Mock_utils:
+        def send_email_to_owner_if_requested(self, request, Member):
+            print("gecstrhdvjtrdbjfjfnbftfthfbjglsdh,gslhgkuslhng")
+            return
+
+    utils = Mock_utils()
+
+    monkeypatch.setattr("utils.utils", utils)
+
+    print("If the user is logged in then the list of his contact should be displayed.")
+    client.force_login(visitor)  # Login the visitor
+    response = client.get("/accounts_my-contacts")
+    assert "GI Joe" in str(response.content)
+    client.logout()
+
+    print("If the user is not logged in then the user")
+    response = client.get("/accounts_my-contacts", follow=True)
+
+    print("     should be able to see the list of contacts")
+    assert not "GI Joe" in str(response.content)
+
+    print("     should be taken to a page displaying 'Not Found'")
+    assert "Not Found" in str(response.content)

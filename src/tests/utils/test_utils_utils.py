@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 
 import pytest
 
+from app_accounts.models import Member
 from utils import utils
 from utils.utils import (
     check_email_validity,
@@ -10,7 +11,30 @@ from utils.utils import (
     global_dict,
     remove_unvalid_otp_from_global_dict,
     send_email,
+    send_email_to_owner_if_requested,
 )
+
+# Create a virtual database then destroy it after all tests have finished.
+pytestmark = pytest.mark.django_db
+
+
+credentials = {
+                "username": "iamtheowner@email.fr",
+                "first_name": "Picsou",
+                "last_name": "DUCK",
+                "email": "iamtheowner@email.fr",
+                "password": "12345678",
+                "is_submit_button_clicked": "yes"}
+
+
+@pytest.fixture
+def add_owner_to_db():
+    return Member.objects.create_user(
+                username=credentials["username"],
+                first_name=credentials["first_name"],
+                password=credentials["password"],
+                email=credentials["username"],
+                is_host = True)
 
 
 def test_check_email_validity():
@@ -137,3 +161,41 @@ def test_remove_unvalid_otp_from_global_dict():
     print("This function should remove the otp from the global_dict")
     remove_unvalid_otp_from_global_dict()
     assert "fake_otp" not in global_dict.keys()
+
+
+def test_send_email_to_owner_if_requested(monkeypatch, add_owner_to_db):
+
+    # Create a registered owner
+    registered_owner = add_owner_to_db  # Fixture
+
+    class Messages:
+        def add(cls, level, message, extra_tags):
+            return
+
+    class Mock_request:
+        POST = {"message_to_owner": "Hello owner!",
+                    "owner_id": "1",
+                    "in_need_email": "need@a.house"}
+        _messages = Messages()
+
+    request = Mock_request()
+
+    def mock_send_email(owner_email, subject, email_content):
+        if "email must fail" in email_content:
+            return False
+        return True
+
+    monkeypatch.setattr("utils.utils.send_email", mock_send_email)
+    print("If all the requested fields to send an email to the owner are well filled "
+          "then should return True")
+    assert send_email_to_owner_if_requested(request, Member) == True
+
+    print("If one of the requested fields to send an email to the owner is not filled "
+          "then should return None")
+    request.POST["message_to_owner"] = ""
+    assert send_email_to_owner_if_requested(request, Member) == None
+
+    print("If something went wrong when trying to send an email to the owner"
+          "then should return False")
+    request.POST["message_to_owner"] = "email must fail"
+    assert send_email_to_owner_if_requested(request, Member) == False

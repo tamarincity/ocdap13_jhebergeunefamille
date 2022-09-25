@@ -36,8 +36,9 @@ class Member(AbstractUser):
             # Add the owner to the list of contacts of the in need person if he is not already in
             if owner in in_need.hosts.all():
                 messages.error(request, ("Cette personne est déjà dans vos contacts"))
-                return
+                return False
 
             in_need.hosts.add(owner)
             messages.success(request, "Cette personne a été ajoutée à vos contacts")
+            return True
         return
