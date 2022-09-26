@@ -137,10 +137,6 @@ class House(models.Model):
                 + settings.PICTURES_FRONT_OF_HOUSES_DIRECTORY
                 + str(file_picture_front_of_house))
             nbr_of_uploaded_pictures += 1
-            print()
-            print()
-            print("Url de l'image principale: ", house_to_update.url_picture_front_of_house)
-            print()
 
         if file_picture_of_bedroom and are_required_fields_filled:
             house_to_update.picture_of_bedroom = file_picture_of_bedroom
@@ -176,6 +172,7 @@ class House(models.Model):
             nbr_n_street: str,
             message_of_presentation_of_house: str,
             is_available: bool) -> True:
+        """Update the house which is in argument"""
 
         if not (isinstance(house, House)
                 and isinstance(capacity, int)
@@ -212,13 +209,14 @@ class House(models.Model):
                 messages.error(
                     request,
                     ("Une erreur inattendue est arrivée ! Contactez les développeurs."))
+                return False
         return True
 
     @classmethod
     def get_elements_by_capacity(
             cls,
             capacity: int,
-            from_id: int,
+            from_id: int,  # It's the index in the returned result (for pagination)
             what_to_find: str,
             total_nbr_of_elements=0,
             city="Mp3gqSe85d2sXXu_kj256Gr_00amdihq 2ncgkq43") -> tuple[list[str], int]:
@@ -226,16 +224,10 @@ class House(models.Model):
         """Get the cities or the houses where there are available hosts that has a capacity
     equals or greater than the one in argument."""
 
-        print()
-        print("capacity: ", capacity)
-        print("from_id: ", from_id)
-        print("Total number of elements:", total_nbr_of_elements)
-        print("what_to_find:", what_to_find)
         elts = []
 
         # Get the total number of corresponding cities
         if not total_nbr_of_elements and what_to_find == "cities":
-            ic()
             total_nbr_of_elements = (House.objects.all()
                                         .filter(capacity__gte=capacity)
                                         .filter(is_available=True)
@@ -249,7 +241,6 @@ class House(models.Model):
 
         # Get the total number of corresponding houses
         if not total_nbr_of_elements and what_to_find == "houses":
-            ic()
             total_nbr_of_elements = (House.objects.all()
                                         .filter(capacity__gte=capacity)
                                         .filter(is_available=True)
@@ -262,10 +253,7 @@ class House(models.Model):
 
         to_id = from_id + NBR_MAX_OF_ELEMENTS_TO_DISPLAY
         if to_id > total_nbr_of_elements:
-            print("Fin de liste atteinte")
             to_id = total_nbr_of_elements
-
-        print("to_id: ", to_id)
 
         # Get the list of cities
         if what_to_find == "cities":
@@ -292,9 +280,6 @@ class House(models.Model):
                     .values_list('id', 'capacity', flat=False)
                     .order_by("capacity")[from_id:to_id])
 
-        print("Elements returned by model: ", elts)
-        print("Total number of elements in database:", total_nbr_of_elements)
-        print()
         return elts, total_nbr_of_elements
 
     @classmethod
