@@ -312,7 +312,6 @@ def test_get_elements_by_capacity(add_owner_to_db):
     assert elts[0]["city"] == "Paris"
 
 
-@pytest.mark.test_me
 def test_get_house_by_id(add_house_to_db):
 
     sut = House()

@@ -1,30 +1,21 @@
-import random
-import string
+from django.test import Client
 
 import pytest
+from pytest_django.asserts import assertTemplateUsed
 
-from app_housing.models import House, ReceivedMessage
+from utils import utils
+from app_housing.models import House
 from app_accounts.models import Member
+from app_housing import views
+from app_housing.views import (
+    home,
+)
 
+
+client = Client()
 
 # Create a virtual database then destroy it after all tests have finished.
 pytestmark = pytest.mark.django_db
-
-messages_from_django = []
-
-
-class Mock_Messages:  # messages.success(request, "blablabla")
-        def add(cls, level, message, extra_tags):
-            global messages_from_django
-            messages_from_django.append(message)
-            return
-
-class Mock_request:
-    POST = {}
-    GET = {}
-    _messages = Mock_Messages()  # because of << messages.success(request, "blablabla")>>
-    user: "Member" = None
-
 
 credentials = {
                 "username": "toto@email.fr",
@@ -37,290 +28,281 @@ credentials = {
 
 
 @pytest.fixture
-def add_visitor_to_db():
+def add_member_to_db():
     return Member.objects.create_user(
-                pseudo="V-Lezard",
-                username="visi@go.fr",
-                first_name="Visigoth",
-                password="12345678",
-                email="visi@go.fr")
+                pseudo=credentials["pseudo"],
+                username=credentials["username"],
+                first_name=credentials["first_name"],
+                password=credentials["password"],
+                email=credentials["username"])
 
 
 @pytest.fixture
-def add_owner_to_db():
+def add_host_to_db():
     return Member.objects.create_user(
-                pseudo="GI Joe",
-                username="gi@joe.com",
-                first_name="Joe",
+                pseudo="Proprio",
+                username="proprio@mail.fr",
+                first_name="Vincent",
                 password="12345678",
-                email="gi@joe.com")
+                email="proprio@mail.fr",
+                is_host = True)
 
 
 @pytest.fixture
-def add_house_to_db(add_owner_to_db) -> tuple:
+def add_in_need_person_to_db():
+    return Member.objects.create_user(
+                pseudo="Help-Me",
+                username="in@need.fr",
+                first_name="Alain",
+                last_name="RUE",
+                password="12345678",
+                email="in@need.fr",
+                is_host = False)
+
+
+@pytest.fixture
+def add_1_house_to_db(add_host_to_db) -> tuple:
     """Create a house with its owner then return a tuple containing:
-    request, visitor, house.
-    The visitor is the owner of the house"""
+    host, house.
+    The host is the owner of the house"""
 
-    request = Mock_request()
-    visitor = request.user = add_owner_to_db  # Because a house requires an owner
+    host = add_host_to_db  # Fixture. A house requires a host (owner)
 
     House.objects.get_or_create(
-        owner=visitor,
-        city="".join(random.choice(string.ascii_letters) for _ in range(5)),
-        nbr_n_street="",
+        owner=host,
+        city="Paris",
+        nbr_n_street="4 rue de Balades",
         message_of_presentation_of_house="",
         is_available=True)
 
-    house = House.objects.get(owner=visitor)
-    return request, visitor, house
+    house = House.objects.get(owner=host)
+    return host, house
 
 
-def test_ReceivedMessage__str__():
+@pytest.mark.integration_test
+def test_home(add_in_need_person_to_db, add_host_to_db):
 
-    sut = ReceivedMessage()
+    # Create registered users using fixtures
+    in_need_person = add_in_need_person_to_db
+    host = add_host_to_db
 
-    print("The __str__ method should return the email address of the sender")
-    sut.email = "user@email.com"
+    print("If the user is an in need person then he should be taken to the normal home-page.")
+    client.force_login(in_need_person)  # Log the user in
+    response = client.get('/')
+    assertTemplateUsed(response, 'app_housing/home.html')
+    client.logout()
 
-    assert "user@email.com" in ReceivedMessage.__str__(sut)
-
-
-def test_House__str__(add_owner_to_db):
-
-    sut = House()
-
-    print("The __str__ method ")
-    print("     should return the pseudo of the owner")
-    sut.owner = add_owner_to_db
-
-    print("     should return the name of the city where the house is located")
-    sut.city = "Béziers"
-
-    assert "Béziers" in House.__str__(sut)
+    print("If the user is a host then he should be taken to then host-home-page")
+    client.force_login(host)  # Log the user in
+    response = client.get('/housing_home', follow=True)
+    assert "Mes logements" in str(response.content)
+    client.logout()
 
 
-def test_House_get_or_create(add_owner_to_db):
+@pytest.mark.integration_test
+def test_host_home(add_in_need_person_to_db, add_host_to_db, add_1_house_to_db):
 
-    sut = House()
-    request = Mock_request()
+    # Create registered users using fixtures
+    in_need_person = add_in_need_person_to_db
+    host = add_host_to_db
 
-    print("If the house doesn't exist, then")
-    visitor = request.user = add_owner_to_db  # Fixture that create the web site visitor
-    print("       this method creates it")
-    house = sut.get_or_create(request)
-    assert isinstance(house, House)
+    print("If the user is not a host then he should be redirected to the normal home-page")
+    client.force_login(in_need_person)  # Log the user in
+    response = client.get('/housing_host-home', follow=True)
+    assert "Je recherche un logement pour" in str(response.content)
+    client.logout()
 
-    print("     The owner of the house should be the current visitor")
-    assert house.owner == visitor
+    print("If the user is a host then")
+    print("     should display his list of houses")
+    house = add_1_house_to_db  # Fixture. Create the user's house in Paris
+    client.force_login(host)  # Log the user in
+    response = client.get('/housing_host-home', follow=True)
+    assert "Paris" in str(response.content)
 
-    print("if the house already exists, then return it")
-    request.POST["id_of_house_to_update"] = 1
-    house = sut.get_or_create(request)
-    assert isinstance(house, House)
-
-    print("     The owner of the house should be the current visitor")
-    assert house.owner == visitor
-
-    print("if id of the house doesn't exist, then ")
-    print("     should alert: 'Une erreur inattendue est arrivée ! Contactez les développeurs.'")
-    request.POST["id_of_house_to_update"] = 100
-    house = sut.get_or_create(request)
-    global messages_from_django
-    assert "Une erreur inattendue est arrivée ! Contactez les développeurs." in messages_from_django
-    messages_from_django.remove("Une erreur inattendue est arrivée ! Contactez les développeurs.")
-
-    print("     should return None (No house created nor returned)")
-    assert not isinstance(house, House)
+    print("     should display the button 'Ajouter un logement'")
+    assert "Ajouter un logement" in str(response.content)
+    client.logout()
 
 
-def test_add_pictures_to_house_if_house_exists(add_house_to_db):
+@pytest.mark.integration_test
+def test_create_or_update_house(monkeypatch, add_1_house_to_db, add_host_to_db):
 
-    sut = House()
+    class MockHouse():
+        def get_or_create(request):
+            _, house = add_1_house_to_db
+            return house
 
-    request, _, house = add_house_to_db  # Fixture
+        def add_pictures_to_house_if_house_exists(*args):
+            return True
 
-    print("If more than one picture has been sent Then")
-    print("     should update the house accordingly")
-    assert sut.add_pictures_to_house_if_house_exists(
-        request,
-        house,
-        "file_picture_front_of_house",
-        "file_picture_of_bedroom",
-        "file_other_picture",
-        2,
-        "Fort-de-France",
-        97200,
-        "1 rue Schoelcher") == True
+        def update(
+                house_to_update,
+                capacity,
+                city,
+                zip_code,
+                nbr_n_street,
+                message_of_presentation_of_house,
+                is_available):
+            house_to_update.capacity = capacity
+            house_to_update.city = city
+            house_to_update.zip_code = zip_code
+            house_to_update.nbr_n_street = nbr_n_street
+            house_to_update.message_of_presentation_of_house = message_of_presentation_of_house
+            house_to_update.is_available = is_available
+            house_to_update.save()
+            return True
 
-    print("     should alert: 'Les nouvelles photos ont bien été enregistrées'")
-    global messages_from_django
-    assert "Les nouvelles photos ont bien été enregistrées" in messages_from_django
-    messages_from_django.remove("Les nouvelles photos ont bien été enregistrées")
+        def remove_house(*args):
+            return True
 
-    print("If only one picture has been sent Then")
-    print("     should alert: 'La nouvelle photo a bien été enregistrée'")
-    sut.add_pictures_to_house_if_house_exists(
-        request,
-        house,
-        "",
-        "",
-        "file_other_picture",
-        2,
-        "Fort-de-France",
-        97200,
-        "1 rue Schoelcher") == True
+    monkeypatch.setattr(views, "House", MockHouse)
 
-    assert "La nouvelle photo a bien été enregistrée" in messages_from_django
-    messages_from_django.remove("La nouvelle photo a bien été enregistrée")
+    print("If the user is not logged then should redirect to the normal home-page.")
+    response = client.get('/housing_create_or_update_house', follow=True)
+    assert "Je recherche un logement pour" in str(response.content)
 
+    print("if the user is a host then should display the page that allows to update "
+          "or create a house")
+    client.force_login(add_host_to_db)  # Log the user in
+    response = client.get('/housing_create_or_update_house', follow=True)
+    assertTemplateUsed(response, 'app_housing/create-or-update-house.html')
 
-def test_update(add_house_to_db):
+    print("If the zip code is not an integer or an integer into a string then "
+          "should alert 'Le code postal doit être un nombre entier !'.")
+    response = client.post('/housing_create_or_update_house',
+                           {"zip_code":"should be an integer or an integer into a string"},
+                           follow=True)
+    assert ("Le code postal doit " in str(response.content)
+            and "tre un nombre entier" in str(response.content))
 
-    sut = House()
+    print("If the capacity is not an integer or an integer into a string then "
+          "should alert 'La capacité doit être un nombre entier !'.")
+    response = client.post('/housing_create_or_update_house',
+                           {"capacity":"should be an integer or an integer into a string"},
+                           follow=True)
+    assert ("La capacit" in str(response.content)
+            and " doit " in str(response.content)
+            and "tre un nombre entier" in str(response.content))
 
-    _, visitor, house = add_house_to_db  # Fixture
+    print("If all the required fields are set then should create the house.")
+    response = client.post('/housing_create_or_update_house',
+                           {"is_available":"true",
+                            "capacity":2,
+                            "city":"Lyon",
+                            "zip_code":"45123",
+                            "nbr_n_street":"18 rue Trop Cool",
+                            "house_to_update":House.objects.get(id=1)},
+                           follow=True)
+    assert "Les nouvelles informations ont bien" in str(response.content)
+    modified_house = House.objects.get(id=1)
+    assert modified_house.is_available == True
 
-    print("If all the fields are the required type then should update the house accordingly")
-    assert sut.update(
-        house,
-        1,
-        "",
-        74747,
-        "",
-        "",
-        True) == True
-
-    print(("If one of the args is not the good type then should raise an exception"))
-    with pytest.raises(Exception):
-        sut.update(
-            house,
-            "Should be an integer",  # <- This should raise an exception
-            "",
-            74747,
-            "",
-            "",
-            True)
-
-
-def test_remove_house(add_house_to_db):
-
-    sut = House()
-    request = Mock_request()
-
-    # To remove a house, we need to create it first
-    request, *_ = add_house_to_db  # Fixture. << *_ >> means the others are not important
-
-    print("If the house to remove exists then ")
-    print("     should remove it")
-    request.POST = {"id_of_house_to_remove": "1"}
-    assert sut.remove_house(request) == True
-
-    print("     should alert: 'Le logement a été supprimé'")
-    global messages_from_django
-    assert "Le logement a été supprimé" in messages_from_django
-    messages_from_django.remove("Le logement a été supprimé")
-
-    print("If the house to remove has not been found then")
-    request.POST = {"id_of_house_to_remove": "100"}
-    print("     should return False")
-    assert sut.remove_house(request) == False
-
-    print("     should alert: 'Une erreur inattendue est arrivée ! Contactez les développeurs.'")
-    assert "Une erreur inattendue est arrivée ! Contactez les développeurs." in messages_from_django
-    messages_from_django.remove("Une erreur inattendue est arrivée ! Contactez les développeurs.")
+    print("If is avialable is set to 'false' in the form then should turn the house "
+          "to unavailable")
+    response = client.post('/housing_create_or_update_house',
+                           {"is_available":"false",
+                            "capacity":2,
+                            "city":"Lyon",
+                            "zip_code":"45123",
+                            "nbr_n_street":"18 rue Trop Cool",
+                            "house_to_update":House.objects.get(id=1)},
+                           follow=True)
+    modified_house = House.objects.get(id=1)
+    assert modified_house.is_available == False
+    client.logout()
 
 
-def test_get_elements_by_capacity(add_owner_to_db):
+@pytest.mark.integration_test
+def test_get_all_elements_with_available_rooms(monkeypatch, add_in_need_person_to_db):
 
-    sut = House()
-    request = Mock_request()
+    class MockHouse():
+        def get_elements_by_capacity(
+                capacity,
+                from_id,
+                what_to_find,
+                total_nbr_of_elements,
+                city):
+            if what_to_find == "houses":
+                return [(1, 2), (2, 2), (3, 4)], 3  # "2 personnes" x2 and "4 personnes" x1
+            if what_to_find == "cities":
+                return [(city, "Ma Ville sur Mer")], 2
 
-    # Creation of 5 houses with different capacities via the fixture 'add_house_to_db'    
-    visitor = request.user = add_owner_to_db  # Because a house requires an owner
-    city = "Paris"  # City where are located the houses
-    wanted_capacity = 2  # Capacity of the wanted houses
+    monkeypatch.setattr(views, "House", MockHouse)
 
-    for capacity in range(1,6):
-        House.objects.get_or_create(
-            capacity=capacity,
-            owner=visitor,
-            city=city,
-            zip_code="12345",
-            nbr_n_street="1 rue Machin",
-            message_of_presentation_of_house="",
-            is_available=True)
+    print("If a city and a capacity is defined in the form then should display a list "
+          "of the corresponding houses")
+    response = client.get('/housing_houses_or_cities',
+                           {"what_to_find":"houses",
+                            "city": "Paris",
+                            "from_id":"0",
+                            "capacity":"2",
+                            "total_nbr_of_elements":"0"},
+                           follow=True)
 
-    # Set the 3d house as unavailable
-    house3 = House.objects.get(id=3)
-    house3.is_available = False
-    house3.save()
+    assert ("4&nbsp;personnes" in str(response.content)
+            and "2&nbsp;personnes" in str(response.content))
 
-    # Set the 4th house as removed
-    house4 = House.objects.get(id=3)
-    house4.is_removed = True
-    house4.save()
+    print("If the user is not logged then should alert: "
+          "'Vous devez être connecté pour en savoir plus'")
+    assert ("Vous devez " in str(response.content)
+            and "tre connect" in str(response.content)
+            and " pour en savoir plus" in str(response.content))
 
-    print("5 houses has been created for this test.")
-    assert House.objects.all().count() == 5
+    print("If the user is logged then should not alert: "
+          "'Vous devez être connecté pour en savoir plus'")
+    client.force_login(add_in_need_person_to_db)  # Log the user in
+    response = client.get('/housing_houses_or_cities',
+                           {"what_to_find":"houses",
+                            "city": "Paris",
+                            "from_id":"0",
+                            "capacity":"2",
+                            "total_nbr_of_elements":"0"},
+                           follow=True)
+    assert not ("Vous devez " in str(response.content)
+            or "tre connect" in str(response.content))
+    client.logout()
 
-    print("     One is unavailable")
-    assert House.objects.all().filter(is_available=False).count() == 1
 
-    print("     and another is removed")
-    assert House.objects.all().filter(is_removed=True).count() == 1
+@pytest.mark.integration_test
+def test_get_house_details(monkeypatch, add_1_house_to_db, add_in_need_person_to_db):
 
-    print("If what are wanted are houses and if the capacity of the "
-          "house and the city are in args then")
-    elts, total_nbr_of_elements = sut.get_elements_by_capacity(
-        capacity=wanted_capacity,
-        from_id=0,
-        what_to_find="houses",
-        total_nbr_of_elements=0,
-        city=city)
+    registered_house = add_1_house_to_db  # Fixture
 
-    print("     should return all the houses with a greater or equal capacity")
-    assert total_nbr_of_elements == 3  # Total nbr of corresponding elements in the database
-    assert len(elts) == 3  # Nbr of returned elements
+    def mock_send_email_to_owner_if_requested(request, Member):
+        return True
 
-    print(" should not return any elements with a less capacity")
-    for elt in elts:
-        assert elt[1] >= wanted_capacity  # elt[0] is the id, elt[1] is the capacity.
+    def mock_add_to_contacts_if_requested(request, Member):
+        return True
 
-    print("If the index of the element in the total corresponding elements is "
-          "greater than zero then should return only the element with a greater or "
-          "equal index")
-    elts, total_nbr_of_elements = sut.get_elements_by_capacity(
-        capacity=wanted_capacity,
-        from_id=2,
-        what_to_find="houses",
-        total_nbr_of_elements=0,
-        city=city)
+    monkeypatch.setattr("utils.utils.send_email_to_owner_if_requested",
+                        mock_send_email_to_owner_if_requested)
+    monkeypatch.setattr("app_accounts.models.Member.add_to_contacts_if_requested",
+                        mock_add_to_contacts_if_requested)
 
-    print("     should return all the houses with a greater or equal capacity")
-    assert total_nbr_of_elements == 3  # Total nbr of corresponding elements in the database
-    assert len(elts) == 1  # Nbr of returned elements
+    print("If the user is not logged then should redirect to a 'Page not found'")
+    response = client.get('/housing_house-details', {"id":"1"}, follow=True)
+    assert "not found" in str(response.content).lower()
 
-    print("If what are wanted are cities then should return all the corresponding cities")
-    elts, total_nbr_of_elements = sut.get_elements_by_capacity(
-        capacity=wanted_capacity,
-        from_id=0,
-        what_to_find="cities",
-        total_nbr_of_elements=0,
-        city=city)
-    assert len(elts) == 1
-    assert elts[0]["city"] == "Paris"
+    print("If the id of the wanted house is in the request then should display the details of the house")
+    client.force_login(add_in_need_person_to_db)  # Log the user in
+    response = client.get('/housing_house-details', {"id":"1"}, follow=True)
+    assert "Proprio" in str(response.content)
+
+
+@pytest.mark.integration_test
+def test_contact():
+
+    print("If the user click on the contact link then should redirect to the contact page"
+          "that displays a form to send a message to the administrator")
+    response = client.get('/housing_contact')
+    assertTemplateUsed(response, "app_housing/contact.html")
 
 
 @pytest.mark.test_me
-def test_get_house_by_id(add_house_to_db):
+@pytest.mark.integration_test
+def test_legal_notice():
 
-    sut = House()
-    add_house_to_db  # Fixture the create a house
-
-    print("if the id corresponds to a house then should return the house")
-    house = sut.get_house_by_id(1)
-    assert house.id == 1
-
-    print("If no house corresponds to the id then should return None")
-    assert sut.get_house_by_id(100) == None
+    print("If the user click on the 'Mentions légales' link then should "
+          "redirect to the legal-notice page")
+    response = client.get('/housing_legal_notice')
+    assertTemplateUsed(response, "app_housing/legal-notice.html")

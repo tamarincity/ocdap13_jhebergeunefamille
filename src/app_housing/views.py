@@ -103,7 +103,7 @@ def create_or_update_house(request):
             and city
             and zip_code
             and nbr_n_street
-            and house_to_update):  # If it's an update of the house
+            and house_to_update):
 
         # If the data of the house and the one from the form are NOT similar
         if not (house_to_update.capacity == capacity
@@ -139,7 +139,6 @@ def get_all_elements_with_available_rooms(request):
 
     what_to_find = request.GET.get('what_to_find', "")
     city = request.GET.get('city', None)
-
     try:
         from_id = int(request.GET.get('from_id', 0))
         capacity = int(request.GET.get('capacity', 0))
