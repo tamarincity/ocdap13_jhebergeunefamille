@@ -189,7 +189,7 @@ AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID', default=None)
 AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY', default=None)
 AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME', default=None)
 AWS_QUERYSTRING_AUTH = env('AWS_QUERYSTRING_AUTH', default=None)
-AWS_DOMAIN_NAME = env('AWS_DOMAIN_NAME', default=None)
+AWS_DOMAIN_NAME = env('AWS_DOMAIN_NAME', default="fake-dommain.amazonaws.com/")
 
 AWS_DEFAULT_ACL = None
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
