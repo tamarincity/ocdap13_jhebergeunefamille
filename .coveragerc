@@ -1,0 +1,23 @@
+[run]
+omit =
+  */manage.py
+  */test/*,
+  */tests/*,
+  */test.py*,
+  */tests.py*,
+  *apps.py,
+  *asgi.py,
+  *constants.py,
+  *migrations/*,
+  *settings*,
+  *tests_*,
+  *test_*,
+  *tests.py,
+  *test.py,
+  *urls.py,
+  *wsgi.py,
+  *wsgi/*,
+  test/*,
+  tests/*,
+  zzz*.py,
+  zzz*.js,

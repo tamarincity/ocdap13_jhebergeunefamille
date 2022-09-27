@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Contact-->
+<section class="page-section" id="contact">
+    <div class="container px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-lg-8 col-xl-6 text-center">
+                <img
+                    class="height_10rem"
+                    src="static/images/customer_service.png"
+                    alt="Hôtesse d'accueil devant un écran"
+                    title="Voici le formulaire de contact." />
+                <h2 class="mt-0">Que pouvons-nous faire pour vous ?</h2>
+                <hr class="divider" />
+                <p class="text-muted mb-5">Envoyez-nous un message!<br/>Nous y répondrons dès que possible.</p>
+            </div>
+        </div>
+
+        <div class="row gx-4 gx-lg-5 justify-content-center mb-5">
+            <div class="col-lg-6">
+                <form id="contactForm" method="post" action="get-message-to-developer" >
+                    {% csrf_token %}
+
+                    {% if messages %}
+                        <div class="alert alert-danger" role="alert">
+                            {% for message in messages %}
+                                {{ message }}
+                            {% endfor %}
+                        </div>
+                    {% endif%}
+                    <!-- FirstName input-->
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="firstname" name="firstname" type="text" placeholder="Prénom NOM" required
+                        value="{{ firstname }}"/>
+                        <label for="firstname">Prénom</label>
+                    </div>
+                    <!-- Lastname input-->
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="lastname" name="lastname" type="text" placeholder="NOM" required
+                        value="{{ lastname }}"/>
+                        <label for="lastname">NOM</label>
+                    </div>
+                    <!-- Email address input-->
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="email" name="email" type="email" placeholder="un@exemple.com" required
+                        value="{{ email }}"/>
+                        <label for="email">Addresse email</label>
+                    </div>
+                    <!-- Phone number input-->
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="phone_number" name="phone_number" type="tel" placeholder="(123) 456-7890" required
+                        value="{{ phone_number }}"/>
+                        <label for="phone">Numéro de téléphone</label>
+                    </div>
+                    <!-- Message input-->
+                    <div class="form-floating mb-3">
+                        <textarea class="form-control" id="message" name="message" type="text" placeholder="Entrez votre message ici."
+                                    style="height: 10rem" required>{{ message }}</textarea>
+                        <label for="message">Message</label>
+                    </div>
+
+                    <!-- Submit Button-->
+                    <div class="d-grid"><button class="btn btn-primary btn-xl" id="submitButton" type="submit">Envoyer</button></div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

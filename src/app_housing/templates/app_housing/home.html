@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+ <!-- Masthead-->
+ <header class="masthead">
+    <div class="container px-4 px-lg-5 h-100">
+        <div class="row gx-4 gx-lg-5 h-100 align-items-center justify-content-center text-center">
+            <div class="col-lg-8 align-self-end">
+                <br /><br /><br /><br /><br />
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert {{ message.tags }}" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+
+                {% endif %}
+                <h1 class="open-sans"><span class="primary-light">J</span><span class="primary-dark">'</span><span class="primary-light">heberge</span><span class="primary-dark">une</span><span class="primary-light">famille</span><span class="primary-dark">.app</span></h1>
+                <hr class="divider" />
+            </div>
+            <div class="col-lg-8 align-self-baseline">
+                <a href="accounts_login">
+                    <button type="submit" class="btn btn-primary" style="left:-5px;">
+                    Je propose un logement
+                    </button>
+                </a>
+                <hr class="divider" />
+                <h2 class="text-white-75 mb-5">Je recherche un logement pour</h2>
+
+                <!-- search bar -->
+                <form action = "housing_houses_or_cities" method="get">
+                    {% csrf_token %}
+                    <input type="hidden" name="what_to_find" value="cities" />
+                    <div class="input-group">
+                        <div class="center">
+                            <center>
+                                <div class="form-outline">
+                                    <input
+                                        id="search-nbr"
+                                        type="number"
+                                        min="1"
+                                        step="1"
+                                        name="capacity"
+                                        class="form-control"
+                                        placeholder="Ex: 2"
+                                        required />
+                                </div>
+                            </center>
+                        </div>
+                    </div>
+                    <br />
+                    <h2 class="text-white-75 mb-5">personne(s)</h2>
+                    <!-- Submit button -->
+                    <button type="submit" class="btn btn-primary" style="left:-5px;">
+                        <i class="bi bi-search"></i>
+                    </button>
+                    <br /><br /><br />
+                </form>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<!-- about-site-->
+<div id="about-us" class="background-photo-intro">
+    <div class="layer-on-photo">
+        <div class="flex-row">
+            <div class="center">
+                <div class="full-center" style="background-color:black;">
+                    <br />
+                    <br />
+                    <span class="white-text">
+                        <h2><span class="primary-light">J</span><span class="primary-dark">'</span><span class="primary-light">heberge</span><span class="primary-dark">une</span><span class="primary-light">famille</span><span class="primary-dark">.app</span></h2><br />
+                        <h3>Permet à tout un chacun de <span class="primary-light">secourir</span> les personnes frappées par le malheur<br />en leur donnant un <span class="primary-light">toit</span> le temps de se <span class="primary-light">rétablir</span>.</h3>
+                    </pan>
+                    <br />
+                    <br />
+                </div>
+            </div>
+        </div>
+        <br/>
+        <div class="">
+            <p class="center">
+                <center>
+                <div style="display: flex; flex-direction: column;">
+                    <center>
+                        <img class="img-fluid img-v40pc _1rem" src="static/images/logo_jheberge.png" alt="J'héberge une famille"/>
+                    </center>
+                    <p class="bg-white">
+                        <b><span class="primary-dark">J'héberge une famille</span></b> est un site qui met en relation,<br />
+                        Des personnes sans domicile avec des particuliers<br />
+                        prêts à les recueillir momentanément et gratuitement.
+                    </p>
+                </div>
+                </center>
+            </p>
+        </div>
+        <div class="container-fluid p-0">
+            <div class="row g-0">
+
+                <!-- Remy the rat -->
+                <div class="col-lg-6">
+                    <center>
+                        <p class="portfolio-box" href="static/images/portfolio/fullsize/1.jpg" title="Famille dans le besoin">
+                            <img class="img-fluid img-v40pc" src="static/images/family.png" alt="Famille dans le besoin" />
+                        </p>
+                    </center>
+                    <p class="h-margin3 bg-white">
+                        <b><span class="primary-dark">Vous êtes dans le besoin</span></b> : Indiquez dans le moteur de recherche le nombre de personnes à loger.<br />
+                        Le système vous présentera alors tous les logements disponibles correspondant à vos critères.<br />
+                        Ces logements sont proposés gracieusement par des volontaires désireux de vous venir en aide.<br />
+                        Après avoir sélectionné la ville de votre choix, vous pourrez contacter la personne qui met le logement<br />
+                        à disposition pour la suite des opérations.
+                    </p>
+                </div>
+
+                <!-- Colette -->
+                <div class="col-lg-6 ">
+                    <center>
+                        <p class="portfolio-box" href="static/images/portfolio/fullsize/2.jpg" title="Hébergeur volontaire">
+                            <img class="img-fluid img-v40pc" src="static/images/abri.png" alt="Hébergeur volontaire" />
+                        </p>
+                    </center>
+                    <p class="h-margin3 bg-white">
+                        <b><span class="primary-dark">Vous souaitez venir en aide</span></b> : Si vous avez une <b>chambre</b> libre ou plus, vous pouvez sortir une personne<br />
+                        ou une famille du malheur en lui proposant de l'héberger <b>gratuitement</b>.<br />
+                        Ceci, juste le temps que la situation s'améliore.<br /><b><span class="primary-dark">Grâce à vous</span></b>,
+                        le sourire pourra à nouveau apparaître sur le visage d'une maman, d'un enfant, d'un homme accablé.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<!-- Masthead-->
+<header class="masthead-h-25">
+    <div class="container px-4 px-lg-5 h-20">
+        <div class="row gx-4 gx-lg-5 h-20 align-items-center justify-content-center text-center">
+            <div class="col-lg-8 align-self-baseline">
+                <br/><br/><br/>
+                <h2 class="text-white-75 mb-5 margin-top-20">
+                    Mes logements
+                </h2>
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert {{ message.tags }}" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</header>
+<br/><br/>
+
+<!-- List of houses -->
+<section>
+    <div class="row gx-4 gx-lg-5 justify-content-center mb-5">
+        <div class="col-lg-6">
+            <br/><br/>
+            <center>
+                <a href="housing_create_or_update_house">
+                    <button class="btn btn-primary btn-xs" type="button">
+                        <i class="bi bi-plus-circle"></i> Ajouter un logement
+                    </button>
+                </a>
+            </center>
+            <br/><br/><br/>
+            {% for house in houses %}
+                <div class="card">
+                    <div class="card-body flex-row space-between">
+                        <!-- Icon house availability -->
+                        {% if house.is_available %}
+                            <div class="green-color" style="line-height: 250%">
+                                <img src="static/images/house_002_green.png" alt="maison de couleur verte" title="Disponible" width="80rem" /><br/>
+                                &nbsp;&nbsp;&nbsp;Disponible&nbsp;&nbsp;&nbsp;</div>
+                        {% else %}
+                            <div class="orange-color" style="line-height: 250%">
+                                <img src="static/images/house_001_orange.png" alt="maison de couleur orange" title="Indisponible" width="80rem" /><br/>
+                                &nbsp;Indisponible&nbsp;</div>
+                        {% endif %}
+                            &nbsp;&nbsp;
+
+                        <div class="flex-column" style="flex: 1;">
+
+                            <!-- Address -->
+                            <div class="line-height-250"><b>{{ house.city}}</b> </div>
+                            <div>{{ house.nbr_n_street }} ({{ house.zip_code }})</div>
+                            <div class="line-height-250">Capacité: {{ house.capacity }} </div>
+                            <div class="line-height-250">
+                                {% if house.url_picture_front_of_house %}
+                                    <a href="{{ house.url_picture_front_of_house }}" target="_blank">voir image</a><br/>
+                                {% endif %}
+                                {% if house.url_picture_of_bedroom %}
+                                    <a href="{{ house.url_picture_of_bedroom }}" target="_blank">voir image</a><br/>
+                                {% endif %}
+                                {% if house.url_other_picture %}
+                                    <a href="{{ house.url_other_picture }}" target="_blank">voir image</a><br/>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div>&nbsp;</div>
+                        <!-- Button modify -->
+                        <form method="post" action="housing_create_or_update_house">
+                            {% csrf_token %}
+                            <div id="btn-update-house">
+                                <input type="hidden" name="id_of_house_to_update" value="{{ house.id }}" />
+                                <button type="submit" class="btn btn-primary"><i class="bi bi-pencil-fill"></i></button>
+                            </div>
+                        </form>
+                        &nbsp;
+                        <!-- Button trash (trigger a modal to confirm removal) -->
+                        <div><button type="button"  class="btn btn-danger" onclick="modalConfirmRemoveHouse({{ house.id }})"><i class="bi bi-trash-fill"></i></button></div>
+                    </div>
+                </div>
+            {% endfor %}
+
+        </div>
+    </div>
+
+</section>
+
+<!-- Modal to confirm removal -->
+<div id="modal-confirm-remove-house" class="fast-modal" style="display: none">
+    <div class="fast-modal-card">
+
+        <div class="container px-4 px-lg-5 h-20">
+            <div class="row gx-4 gx-lg-5 h-20 align-items-center justify-content-center text-center">
+                <div class="col-lg-8 align-self-baseline">
+                    <br/><br/>
+                    <h2 class="mb-5 margin-top-20">
+                        Suppression de logement ?
+                    </h2>
+                    <h4 class="mb-5 margin-top-20">
+                        Voulez-vous vraiment supprimer ce logement ?
+                    </h4>
+                    <hr class="divider" />
+                    <br/><br/>
+                    <div class="flex-row justify-content-around">
+                        <button type="button"  class="btn btn-primary" onclick="closeModalConfirmRemoveHouse()"> Annuler </button>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <form method="post" action="#">
+                            {% csrf_token %}
+                            <div id="btn-confirmation-remove-house">
+                                <!-- Javascript will add a delete (submit) button -->
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

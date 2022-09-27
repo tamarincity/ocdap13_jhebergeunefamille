@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- banner with layer-->
+<!-- Masthead-->
+<header class="masthead-h-25">
+    <div class="container px-4 px-lg-5 h-20">
+        <div class="row gx-4 gx-lg-5 h-20 align-items-center justify-content-center text-center">
+            <div class="col-lg-8 align-self-baseline">
+                <br/><br/><br/>
+                <h2 class="text-white-75 mb-5 margin-top-20">
+                    {% if member.first_name %}
+                        {{ member.first_name }}
+                    {% else %}
+                        {{ member.pseudo }}
+                    {% endif %}
+                </h2>
+            </div>
+        </div>
+    </div>
+</header>
+<br/><br/>
+
+<!-- Profile form -->
+<section>
+    <div class="row gx-4 gx-lg-5 justify-content-center mb-5">
+        <div class="col-lg-6">
+            <form id="profile-form" method="post" action="#" >
+                {% csrf_token %}
+                <!-- Pseudo input (not editable)-->
+                <div class="form-floating mb-3">
+                    <input readonly class="form-control" id="pseudo" type="text" placeholder="Pseudo" name="pseudo" value="{{ member.pseudo }}" required />
+                    <label for="pseudo">Pseudo (non éditable)</label>
+                </div>
+                <!-- Email input-->
+                <div class="form-floating mb-3">
+                    <input readonly class="form-control" id="email" type="text" name="email" value="{{ member.email }}" />
+                    <label for="email">Email (non éditable)</label>
+                </div>
+                <!-- First name input-->
+                <div class="form-floating mb-3">
+                    <input class="form-control" id="first_name" type="text" placeholder="First Name" name="first_name" value="{{ member.first_name }}" required />
+                    <label for="first_name">Prénom</label>
+                </div>
+                <!-- Last name input-->
+                <div class="form-floating mb-3">
+                    <input class="form-control" id="last_name" type="text" placeholder="last name" name="last_name" value="{{ member.last_name }}" />
+                    <label for="last_name">Nom de famille</label>
+                </div>
+                <!-- Telephone input-->
+                <div class="form-floating mb-3">
+                    <input class="form-control" id="tel" type="tel" placeholder="Votre numéro de téléphone ici" name="tel" value="{{ member.phone }}" />
+                    <label for="tel">Téléphone</label>
+                </div>
+
+                <!-- Message of presentation input-->
+                <div class="form-floating mb-3">
+                    Message de présentation :<br />
+                    <textarea id="presentation" class="form-control" style="resize: none;" name="presentation" rows="4" maxlength="300" resize="false">{{ member.message_of_presentation }}</textarea>
+                </div>
+
+                <!-- Username -->
+                <div class="form-floating mb-3">
+                    <input hidden id="username" type="text" name="username" value="{{ member.username }}" />
+                </div>
+
+                <!-- is submit button clicked -->
+                <div class="form-floating mb-3">
+                    <input hidden id="is_submit_button_clicked" type="text" name="is_submit_button_clicked" value="clicked" />
+                </div>
+
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert {{ message.tags }}" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif%}
+
+                <!-- Submit Button-->
+                <div class="d-grid"><button class="btn btn-primary btn-xl" id="submitButton" type="submit">Mettre à jour</button></div>
+                <br/>
+            </form>
+        </div>
+    </div>
+</section>
+
+
+{% endblock %}

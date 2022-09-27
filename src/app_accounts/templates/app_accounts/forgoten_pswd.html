@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<br />
+<br />
+
+<!-- login-->
+<section class="page-section" id="login">
+    <div class="container px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-lg-8 col-xl-6 text-center">
+                <h2 class="mt-0">Mot de passe oublié</h2>
+                <hr class="divider" />
+                <p class="text-muted mb-5">Un code <b>OTP</b> vous sera envoyé par email</p>
+            </div>
+        </div>
+        <div class="row gx-4 gx-lg-5 justify-content-center mb-5">
+            <div class="col-lg-6">
+
+                <form id="emailForm" method="post" action="#" >
+                    {% csrf_token %}
+                    <!-- Email address input-->
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="username" type="email" placeholder="un@exemple.com" name="username" required />
+                        <label for="email">Adresse email</label>
+                    </div>
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert {{ message.tags }}" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+
+                    {% else %}
+                        <div class="alert alert-light" role="alert" style="visibility: hidden">
+                            No message to display
+                        </div>
+
+
+                    {% endif%}
+                    <!-- Submit Button-->
+                    <div class="d-grid"><button class="btn btn-primary btn-xl" id="submitButton" type="submit">Valider</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

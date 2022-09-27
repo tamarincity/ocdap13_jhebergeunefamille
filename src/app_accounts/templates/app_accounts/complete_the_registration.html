@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<br/>
+<br/>
+<!-- signup-->
+<section class="page-section" id="signup">
+    <div class="container px-4 px-lg-5">
+
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-lg-8 col-xl-6 text-center">
+                <h2 class="mt-0">S'inscrire</h2>
+                <hr class="divider" />
+                <p class="text-muted mb-5">Terminer l'inscription</p>
+            </div>
+        </div>
+
+
+        <div class="row gx-4 gx-lg-5 justify-content-center mb-5">
+            <div class="col-lg-6">
+
+                <form id="signupForm" method="post" action="#" >
+                    {% csrf_token %}
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert {{ message.tags }}" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+
+                    {% else %}
+                        <div class="alert alert-light" role="alert" style="visibility: hidden">
+                            No message to display
+                        </div>
+
+
+                    {% endif%}
+
+                    <!-- Provenance input -->
+                    <input type="hidden" name="provenance" value="{{ provenance }}"/>
+
+                    <!-- OTP input-->
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="otp" type="text" placeholder="Code OTP reçu par email" name="otp" value="{{ otp }}" required />
+                        <label for="email">Code OTP reçu par email <font color="E8A75D"><b>*</b></font></label>
+                    </div>
+
+                    <!-- Pseudo input-->
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="pseudo" type="text" placeholder="Votre pseudo ici" name="pseudo" value="{{ pseudo }}" required />
+                        <label for="pseudo">Pseudo <font color="E8A75D"><b>*</b></font></label>
+                    </div>
+
+                    <!-- First name input-->
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="first_name" type="text" placeholder="Votre prénom ici" name="first_name" value="{{ first_name }}" required/>
+                        <label for="first_name">Prénom <font color="E8A75D"><b>*</b></font></label>
+                    </div>
+
+                    <!-- Telephone input-->
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="tel" type="tel" placeholder="Votre numéro de téléphone ici" name="tel" value="{{ tel }}" />
+                        <label for="tel">Téléphone</label>
+                    </div>
+
+                    <!-- Message of presentation input-->
+                    <div class="form-floating mb-3">
+                        Message de présentation :<br />
+                        <textarea
+                            id="presentation"
+                            class="form-control"
+                            style="resize: none;"
+                            name="presentation"
+                            maxlength="300"
+                            resize="false">{{ presentation }}</textarea>
+                    </div>
+
+                    <!-- Password input-->
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="password" type="password" placeholder="Votre mot de passe ici" name="password" required />
+                        <label for="password">Mot de passe <font color="E8A75D"><b>*</b></font></label>
+                    </div>
+
+                    <!-- Is_offering_accommodation input-->
+                    <div class="form-floating mb-3">
+                        Situation <font color="E8A75D"><b>*</b></font> :
+                        <select id="is_offering_accommodation" name="is_offering_accommodation">
+                            {% if is_offering_accommodation == True %}
+                                <option value="false">Je suis à la recherche d'un logement</option>
+                                <option selected value="true">Je propose un logement gratuitement</option>
+                            {% else %}
+                                <option selected value="false">Je suis à la recherche d'un logement</option>
+                                <option  value="true">Je propose un logement gratuitement</option>
+                            {% endif %}
+                        </select>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <font color="E8A75D"><b>*</b> Champ obligatoire</font>
+                    </div>
+
+
+
+                    <!-- Submit Button-->
+                    <div class="d-grid">{{ user_info.is_offering_accommodation }}<button class="btn btn-primary btn-xl" id="submitButton" type="submit">Valider</button></div>
+
+                    <div class="row gx-4 gx-lg-5 justify-content-center">
+                        <div class="col-lg-8 col-xl-6 text-center">
+                            <a class="nav-link caramel-mou" id="login" href="{% url 'accounts_signup' %}">
+                                Envoyer un nouveau code OTP
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+
+
+{% endblock %}

@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<!-- Masthead-->
+<header class="masthead-h-25">
+    <div class="container px-4 px-lg-5 h-20">
+        <div class="row gx-4 gx-lg-5 h-20 align-items-center justify-content-center text-center">
+            <div class="col-lg-8 align-self-baseline">
+                <br/><br/><br/>
+                <h2 class="text-white-75 mb-5 margin-top-20">
+                    {{ house.city }}
+                </h2>
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert {{ message.tags }}" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</header>
+<br/><br/>
+
+<!-- List of houses -->
+<section>
+    <div class="row gx-4 gx-lg-5 justify-content-center mb-5">
+        <div class="col-lg-6">
+            <br/><br/>
+                <!-- Card of house details -->
+                <div class="card">
+                    <div class="card-body flex-row space-between">
+                        <!-- Icon house -->
+                        <div class="green-color" style="line-height: 250%">
+                            <img src="static/images/house_002_green.png" alt="Contour d'une maison en vert" title="Disponible" width="80rem" /><br/>
+                        </div>
+                        <!-- House info -->
+                        <div class="flex-column"
+                            Adresse :<br/>{{ house.nbr_n_street }}<br/>
+                            {{ house.zip_code }}<br/>
+                            {{ house.city }}<br/>
+                            <a target="_blank" href="https://maps.google.com/?q={{ house.nbr_n_street }} {{ house.zip_code}} {{ house.city }}">
+                                Voir sur Maps
+                            </a></br><br/>
+                            Peut accueillir<br/>{{ house.capacity }} {% if house.capacity > 1 %}personnes{% else %}personne{% endif %}<br/>
+                        </div>
+                    </div>
+                    <div class="card-body flex-row space-between">
+                        <!-- Icon house -->
+                        <div class="green-color" style="line-height: 250%">
+                            <img class="nav-img" src="static/images/user.png" alt="Icone d'une personne" /><br/>
+                        </div>
+                        <!-- Owner info -->
+                        <div class="flex-column">
+                            Pseudo : {{ house.owner.pseudo }}<br/>
+                            Prénom : {{ house.owner.first_name }}<br/>
+                            {% if house.owner.last_name %}Nom : {{ house.owner.last_name }}<br/>{% endif %}
+                            {% if house.owner.phone %}Tél. : : {{ house.owner.phone }}<br/>{% endif %}
+                            {% if house.owner.message_of_presentation %}Info : {{ house.owner.message_of_presentation }}<br/>{% endif %}
+                            <hr class="divider" />
+
+                            <!-- Links to see pictures -->
+                            {% if house.picture_front_of_house %}
+                                <a href="{{ house.url_picture_front_of_house }}" target="_blank">voir photo</a><br/>
+                            {% endif %}
+                            {% if house.picture_of_bedroom %}
+                                <a href="{{ house.url_picture_of_bedroom }}" target="_blank">voir photo</a><br/>
+                            {% endif %}
+                            {% if house.other_picture %}
+                                <a href="{{ house.url_other_picture }}" target="_blank">voir photo</a><br/>
+                            {% endif %}
+                            {% if not house.picture_front_of_house and not house.picture_of_bedroom and not house.other_picture %}
+                                Il n'y a pas de photo disponible.
+                            {% endif %}
+                            <hr class="divider" />
+
+                            <!-- Button Add to contacts (form) -->
+                            <form id="add-to-contacts" method="post" action="#" >
+                                {% csrf_token %}
+                                <input type="hidden" name="owner_id" value="{{ house.owner.id }}"/>
+                                <input type="hidden" name="in_need_email" value="{{ user.email }}"/>
+                                <input type="hidden" name="add_to_contact" value="true"/>
+                                &nbsp;<button type="submit" class="btn btn-primary">Ajouter aux contacts</button>
+                            </form>
+                            <br/>
+                        </div>
+                    </div>
+
+                    <!-- Form to send a message to host -->
+                    <center>
+                        <form id="send-message-to-host" method="post" action="#" >
+                            {% csrf_token %}
+                            <input type="hidden" name="owner_id" value="{{ house.owner.id }}"/>
+                            <input type="hidden" name="in_need_email" value="{{ user.email }}"/>
+                            <input type="hidden" name="id" value="{{ house.id }}"/>
+                            <p class="margin-side-10">
+                                Vous pouvez écrire à l'hébergeur dans le champ ci-dessous.<br/>
+                                Votre adresse e-mail lui sera envoyée.
+                            </p>
+                            <textarea id="text-area-send-message-to-host" class="form-control" style="resize: none;" name="message_to_owner" rows="5" maxlength="300" resize="false"></textarea>
+                            <br/>
+                            &nbsp;<button type="submit" class="btn btn-primary">Envoyer un message</button>
+                        </form>
+                        <br/>
+                    </center>
+                </div>
+
+
+            <br />
+            <center>
+                <button class="primary-dark" onclick="history.back()">Page précédente</button>
+            </center>
+
+
+        </div>
+    </div>
+
+</section>
+{% endblock %}

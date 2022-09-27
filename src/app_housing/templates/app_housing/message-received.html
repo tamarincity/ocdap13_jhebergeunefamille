@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Contact-->
+<section class="page-section" id="contact">
+    <div class="container px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center mb-5">
+            <div class="col-lg-6">
+
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert {{ message.tags }}" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+
+                {% endif %}
+                <!-- Homepage Button-->
+                <center>
+                    <a href="/"><button class="btn btn-primary btn-xl" type="button">Retour à l'accueil</button></a>
+                </center>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

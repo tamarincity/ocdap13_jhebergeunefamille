@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<!-- Masthead-->
+<header class="masthead-h-25">
+    <div class="container px-4 px-lg-5 h-20">
+        <div class="row gx-4 gx-lg-5 h-20 align-items-center justify-content-center text-center">
+            <div class="col-lg-8 align-self-baseline">
+                <br/><br/><br/>
+                <h2 class="text-white-75 mb-5 margin-top-20">
+                    Mes contacts
+                </h2>
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert {{ message.tags }}" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</header>
+<br/><br/>
+
+<!-- List of houses -->
+<section>
+    <div class="row gx-4 gx-lg-5 justify-content-center mb-5">
+        <div class="col-lg-6">
+            <br/><br/>
+            <!-- Card of a house -->
+            {% for my_contact in contacts %}
+                {% if user.is_authenticated %}
+                        <div class="card">
+                            <div class="card-body flex-row space-between">
+                                <div class="flex-column">
+                                    Pseudo : {{ my_contact.pseudo }}<br/>
+                                    Prénom : {{ my_contact.first_name }}<br/>
+                                    {% if my_contact.last_name %}Nom : {{ my_contact.last_name }}<br/>{% endif %}
+                                    {% if my_contact.phone %}Tél. : : {{ my_contact.phone }}<br/>{% endif %}
+                                    {% if my_contact.message_of_presentation %}Info : {{ my_contact.message_of_presentation }}<br/>{% endif %}
+                                    <br/>
+                                    <button id="toggle-button_{{ my_contact.id }}" class="btn btn-primary" type="button" onclick="showMessageField({{ my_contact.id }})">Écrire un message</button>
+                                    <br/>
+                                    <!-- Form to send a message to host -->
+                                        <form id="send-message-to-host_{{ my_contact.id }}" class="hidden" method="post" action="#" >
+                                            {% csrf_token %}
+                                            <input type="hidden" name="owner_id" value="{{ my_contact.id }}"/>
+                                            <input type="hidden" name="in_need_email" value="{{ user.email }}"/>
+                                            <input type="hidden" name="id" value="{{ house.id }}"/>
+                                            <p class="margin-side-10">
+                                                Vous pouvez écrire à l'hébergeur dans le champ ci-dessous.<br/>
+                                                Votre adresse e-mail lui sera envoyée.
+                                            </p>
+                                            <textarea id="text-area-send-message-to-host" class="form-control" style="resize: none;" name="message_to_owner" rows="5" maxlength="300" resize="false"></textarea>
+                                            <br/>
+                                            &nbsp;<button type="submit" class="btn btn-primary">Envoyer un message</button>&nbsp;&nbsp;&nbsp;
+                                        </form>
+                                        &nbsp;<button id="btn-cancel_{{ my_contact.id }}" class="hidden" onclick="cancelMessage({{ my_contact.id }})">Annuler</button>
+                                        <br/>
+                                </div>
+                            </div>
+                        </div>
+                {% endif %}
+            {% endfor %}
+            {% if not contacts %}
+            <center>
+                <h3>Vous n'avez pas encore ajouté de contact</h3>
+            </center>
+                {% endif %}
+            <br />
+
+        </div>
+    </div>
+
+</section>
+<script type="text/javascript">
+    function showMessageField(suffix) {
+        let button = document.getElementById(`toggle-button_${suffix}`);
+        button.style.display = "none"
+
+        let form = document.getElementById(`send-message-to-host_${suffix}`)
+        form.style.display = "block"
+
+        let btnCancel = document.getElementById(`btn-cancel_${suffix}`)
+        btnCancel.classList = "btn btn-danger"
+        btnCancel.style.display = "block"
+    }
+
+    function cancelMessage(suffix) {
+        let button = document.getElementById(`toggle-button_${suffix}`);
+        button.style.display = "block"
+
+        let form = document.getElementById(`send-message-to-host_${suffix}`)
+        form.style.display = "none"
+
+        let btnCancel = document.getElementById(`btn-cancel_${suffix}`)
+        btnCancel.style.display = "none"
+    }
+</script>
+{% endblock %}

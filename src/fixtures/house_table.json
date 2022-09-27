@@ -1,0 +1,202 @@
+[
+{
+  "model": "app_housing.house",
+  "pk": 3,
+  "fields": {
+    "capacity": 20,
+    "owner": 4,
+    "city": "Fort de France",
+    "nbr_n_street": "La Savane",
+    "zip_code": 97200,
+    "picture_front_of_house": "pictures_front_of_house/savane_fort-de-france.jpg",
+    "picture_of_bedroom": "",
+    "other_picture": "",
+    "url_picture_front_of_house": "https://jhebergeunefamille-bucket.s3.eu-west-3.amazonaws.com/pictures_front_of_house/savane_fort-de-france.jpg",
+    "url_picture_of_bedroom": "",
+    "url_other_picture": "",
+    "message_of_presentation_of_house": "Très spacieux",
+    "is_available": true,
+    "is_removed": false
+  }
+},
+{
+  "model": "app_housing.house",
+  "pk": 4,
+  "fields": {
+    "capacity": 10,
+    "owner": 4,
+    "city": "Béziers",
+    "nbr_n_street": "Parc Des Poêtes",
+    "zip_code": 34500,
+    "picture_front_of_house": "pictures_front_of_house/plateau_des_poetes.jpg",
+    "picture_of_bedroom": "",
+    "other_picture": "",
+    "url_picture_front_of_house": "https://jhebergeunefamille-bucket.s3.eu-west-3.amazonaws.com/pictures_front_of_house/plateau_des_poetes.jpg",
+    "url_picture_of_bedroom": "",
+    "url_other_picture": "",
+    "message_of_presentation_of_house": "Beaucoup d'espace",
+    "is_available": true,
+    "is_removed": false
+  }
+},
+{
+  "model": "app_housing.house",
+  "pk": 5,
+  "fields": {
+    "capacity": 5,
+    "owner": 4,
+    "city": "Montpellier",
+    "nbr_n_street": "3 avenue Machin Truc",
+    "zip_code": 34000,
+    "picture_front_of_house": "pictures_front_of_house/front_of_house001.jpg",
+    "picture_of_bedroom": "pictures_of_bedrooms/bedroom001.jpeg",
+    "other_picture": "other_pictures/cheminée.jpg",
+    "url_picture_front_of_house": "https://jhebergeunefamille-bucket.s3.eu-west-3.amazonaws.com/pictures_front_of_house/front_of_house001.jpg",
+    "url_picture_of_bedroom": "https://jhebergeunefamille-bucket.s3.eu-west-3.amazonaws.com/pictures_of_bedrooms/bedroom001.jpeg",
+    "url_other_picture": "https://jhebergeunefamille-bucket.s3.eu-west-3.amazonaws.com/other_pictures/cheminée.jpg",
+    "message_of_presentation_of_house": "Maison située dans un quartier sympa",
+    "is_available": true,
+    "is_removed": false
+  }
+},
+{
+  "model": "app_housing.house",
+  "pk": 6,
+  "fields": {
+    "capacity": 1,
+    "owner": 4,
+    "city": "Béziers",
+    "nbr_n_street": "rue des Géants",
+    "zip_code": 34500,
+    "picture_front_of_house": "",
+    "picture_of_bedroom": "pictures_of_bedrooms/petit_studio001.jpg",
+    "other_picture": "",
+    "url_picture_front_of_house": "",
+    "url_picture_of_bedroom": "https://jhebergeunefamille-bucket.s3.eu-west-3.amazonaws.com/pictures_of_bedrooms/petit_studio001.jpg",
+    "url_other_picture": "",
+    "message_of_presentation_of_house": "Petit studio",
+    "is_available": false,
+    "is_removed": false
+  }
+},
+{
+  "model": "app_housing.house",
+  "pk": 7,
+  "fields": {
+    "capacity": 4,
+    "owner": 3,
+    "city": "Marseille",
+    "nbr_n_street": "13 rue des Révoltés",
+    "zip_code": 13000,
+    "picture_front_of_house": "pictures_front_of_house/squat-marseille.jpg",
+    "picture_of_bedroom": "",
+    "other_picture": "",
+    "url_picture_front_of_house": "https://jhebergeunefamille-bucket.s3.eu-west-3.amazonaws.com/pictures_front_of_house/squat-marseille.jpg",
+    "url_picture_of_bedroom": "",
+    "url_other_picture": "",
+    "message_of_presentation_of_house": "Situé dans un quartier mal famé",
+    "is_available": true,
+    "is_removed": false
+  }
+},
+{
+  "model": "app_housing.house",
+  "pk": 8,
+  "fields": {
+    "capacity": 2,
+    "owner": 3,
+    "city": "Rouen",
+    "nbr_n_street": "76 rue des gargouilles",
+    "zip_code": 76000,
+    "picture_front_of_house": "pictures_front_of_house/gargouilles-de-notre-dame_eglise.jpg",
+    "picture_of_bedroom": "",
+    "other_picture": "",
+    "url_picture_front_of_house": "https://jhebergeunefamille-bucket.s3.eu-west-3.amazonaws.com/pictures_front_of_house/gargouilles-de-notre-dame_eglise.jpg",
+    "url_picture_of_bedroom": "",
+    "url_other_picture": "",
+    "message_of_presentation_of_house": "Situé dans un quartier un peu effrayant la nuit",
+    "is_available": true,
+    "is_removed": false
+  }
+},
+{
+  "model": "app_housing.house",
+  "pk": 9,
+  "fields": {
+    "capacity": 1,
+    "owner": 3,
+    "city": "Montpellier",
+    "nbr_n_street": "1 Bis rue du Premier Né",
+    "zip_code": 34000,
+    "picture_front_of_house": "",
+    "picture_of_bedroom": "",
+    "other_picture": "",
+    "url_picture_front_of_house": "",
+    "url_picture_of_bedroom": "",
+    "url_other_picture": "",
+    "message_of_presentation_of_house": "Une chambre libre dans un F4 occupé par une famille de 4 personnes",
+    "is_available": true,
+    "is_removed": false
+  }
+},
+{
+  "model": "app_housing.house",
+  "pk": 10,
+  "fields": {
+    "capacity": 5,
+    "owner": 4,
+    "city": "Montpellier",
+    "nbr_n_street": "17 boulevard des Capucines",
+    "zip_code": 34000,
+    "picture_front_of_house": "",
+    "picture_of_bedroom": "",
+    "other_picture": "",
+    "url_picture_front_of_house": "",
+    "url_picture_of_bedroom": "",
+    "url_other_picture": "",
+    "message_of_presentation_of_house": "3è étage porte 32",
+    "is_available": true,
+    "is_removed": false
+  }
+},
+{
+  "model": "app_housing.house",
+  "pk": 11,
+  "fields": {
+    "capacity": 3,
+    "owner": 5,
+    "city": "Montpellier",
+    "nbr_n_street": "9 rue Jacques Martin",
+    "zip_code": 34000,
+    "picture_front_of_house": "",
+    "picture_of_bedroom": "",
+    "other_picture": "",
+    "url_picture_front_of_house": "",
+    "url_picture_of_bedroom": "",
+    "url_other_picture": "",
+    "message_of_presentation_of_house": "Appartement situé dans une école",
+    "is_available": true,
+    "is_removed": false
+  }
+},
+{
+  "model": "app_housing.house",
+  "pk": 12,
+  "fields": {
+    "capacity": 2,
+    "owner": 5,
+    "city": "Montpellier",
+    "nbr_n_street": "8 rue Fausher",
+    "zip_code": 34000,
+    "picture_front_of_house": "",
+    "picture_of_bedroom": "",
+    "other_picture": "",
+    "url_picture_front_of_house": "",
+    "url_picture_of_bedroom": "",
+    "url_other_picture": "",
+    "message_of_presentation_of_house": "Placé à proximité d'un champ de blé",
+    "is_available": true,
+    "is_removed": false
+  }
+}
+]

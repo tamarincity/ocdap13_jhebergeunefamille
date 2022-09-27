@@ -1,0 +1,32 @@
+[flake8]
+ignore = W503, E126, E712, E127, E711, E131, F401, F841  # Error code that are ignored
+exclude =
+    .git,
+    __pycache__,
+    docs/source/conf.py,
+    old,
+    build,
+    dist,
+    .pytest_cache,
+    htmlcov,
+    .coverage,
+    .coveragerc,
+    .gitignore,
+    Dockerfile,
+    env.py,
+    Pipfile,
+    Pipfile.lock,
+    Procfile,
+    production.py,
+    README.MD,
+    requirements.txt,
+    zzz*.py,
+    todo.txt,
+    TODO.txt,
+    SQL,
+    pytest.ini,
+    *_test_settings.py,
+    */migrations/*,
+    *conftest.py,
+max-complexity = 14
+max-line-length = 119
