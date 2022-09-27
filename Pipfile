@@ -17,6 +17,7 @@ pillow = "*"
 boto3 = "*"
 django-storages = "*"
 whitenoise = "*"
+gunicorn = "*"
 
 [dev-packages]
 autopep8 = "*"
