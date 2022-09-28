@@ -23,7 +23,7 @@ Ubuntu 20+, python v3.9+, postgresql v12+
     AWS_DOMAIN_NAME: the path to access the bucket from https to .amazonaws.com/  (Eg: https://mybucket.s3.eu-west-3.amazonaws.com/)
     AWS_QUERYSTRING_AUTH: False
     
-6. If you want to do CI/CD, you have to add in the 'secrets' of github the environment variables that are in the file production.py. You must also add the following variables:
+6. If you want to do CI/CD, you have to uncomment the CD part and add in the 'secrets' of github the environment variables that are in the file production.py. You must also add the following variables:
 
     IP_ADDRESS: The IP addres of the app (Because of Continuous Deployment)
     PROJECT_FOLDER: The name of the folder that contains the app
