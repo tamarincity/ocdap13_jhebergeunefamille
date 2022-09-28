@@ -48,41 +48,41 @@ jobs:
         export PYTHONPATH=src
         python -m pytest
     # Deploy to server ===================
-    - name: Very first time deploying to server with ssh
-      continue-on-error: true
-      env:
-        SSH_KEY_PRIVATE: ${{ secrets.SSH_KEY_PRIVATE }}
-        USERNAME: ${{ secrets.USERNAME }}
-        IP_ADDRESS: ${{ secrets.IP_ADDRESS }}
-        USER_PASSWORD: ${{ secrets.USER_PASSWORD }}
-        REPOSITORY_ADDRESS: ${{ secrets.REPOSITORY_ADDRESS }}
-        PROJECT_FOLDER: ${{ secrets.PROJECT_FOLDER }}
-      if: github.ref == 'refs/heads/main' && job.status == 'success'
-      run: |
-        cd ..
-        cd ..
-        cd ..
-        mkdir .ssh
-        cd .ssh
-        touch id_rsa
-        touch known_hosts
-        eval `ssh-agent -s`
-        echo "$SSH_KEY_PRIVATE" > id_rsa
-        chmod 400 id_rsa
-        ssh-add id_rsa
-        ssh-keyscan -H 142.93.142.2 >> known_hosts
-        ssh-add -l
-        cd ..
-        ssh -i .ssh/id_rsa ${{ secrets.USERNAME }}@${{ secrets.IP_ADDRESS }} "git clone ${{ secrets.REPOSITORY_ADDRESS }}"
-    - name: Deploying to server with ssh then reloading supervisor (It's not the first deployment)
-      if: github.ref == 'refs/heads/main' && job.status == 'success'
-      run: |
-        cd ..
-        cd ..
-        cd ..
-        ssh -i .ssh/id_rsa ${{ secrets.USERNAME }}@${{ secrets.IP_ADDRESS }} "cd ${{ secrets.PROJECT_FOLDER }}; git pull"
-        ssh -i .ssh/id_rsa ${{ secrets.USERNAME }}@${{ secrets.IP_ADDRESS }} "echo '${{ secrets.USER_PASSWORD }}' | sudo -S supervisorctl stop all"
-        ssh -i .ssh/id_rsa ${{ secrets.USERNAME }}@${{ secrets.IP_ADDRESS }} "echo '${{ secrets.USER_PASSWORD }}' | sudo -S supervisorctl reload"
+    # - name: Very first time deploying to server with ssh
+    #   continue-on-error: true
+    #   env:
+    #     SSH_KEY_PRIVATE: ${{ secrets.SSH_KEY_PRIVATE }}
+    #     USERNAME: ${{ secrets.USERNAME }}
+    #     IP_ADDRESS: ${{ secrets.IP_ADDRESS }}
+    #     USER_PASSWORD: ${{ secrets.USER_PASSWORD }}
+    #     REPOSITORY_ADDRESS: ${{ secrets.REPOSITORY_ADDRESS }}
+    #     PROJECT_FOLDER: ${{ secrets.PROJECT_FOLDER }}
+    #   if: github.ref == 'refs/heads/main' && job.status == 'success'
+    #   run: |
+    #     cd ..
+    #     cd ..
+    #     cd ..
+    #     mkdir .ssh
+    #     cd .ssh
+    #     touch id_rsa
+    #     touch known_hosts
+    #     eval `ssh-agent -s`
+    #     echo "$SSH_KEY_PRIVATE" > id_rsa
+    #     chmod 400 id_rsa
+    #     ssh-add id_rsa
+    #     ssh-keyscan -H 142.93.142.2 >> known_hosts
+    #     ssh-add -l
+    #     cd ..
+    #     ssh -i .ssh/id_rsa ${{ secrets.USERNAME }}@${{ secrets.IP_ADDRESS }} "git clone ${{ secrets.REPOSITORY_ADDRESS }}"
+    # - name: Deploying to server with ssh then reloading supervisor (It's not the first deployment)
+    #   if: github.ref == 'refs/heads/main' && job.status == 'success'
+    #   run: |
+    #     cd ..
+    #     cd ..
+    #     cd ..
+    #     ssh -i .ssh/id_rsa ${{ secrets.USERNAME }}@${{ secrets.IP_ADDRESS }} "cd ${{ secrets.PROJECT_FOLDER }}; git pull"
+    #     ssh -i .ssh/id_rsa ${{ secrets.USERNAME }}@${{ secrets.IP_ADDRESS }} "echo '${{ secrets.USER_PASSWORD }}' | sudo -S supervisorctl stop all"
+    #     ssh -i .ssh/id_rsa ${{ secrets.USERNAME }}@${{ secrets.IP_ADDRESS }} "echo '${{ secrets.USER_PASSWORD }}' | sudo -S supervisorctl reload"
 
 # SSH_KEY_PRIVATE est la clef ssh privée en local (id_rsa)
 # USERNAME est le nom qui permet d'accéder au server distant (ex: julie@123.42.123.3)
