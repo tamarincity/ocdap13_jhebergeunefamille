@@ -17,8 +17,10 @@ from icecream import ic
 from app_accounts.models import Member
 from utils import utils
 from .constants import (
+    LARA_FAKE_OTP,
     OTP_VALIDITY_DURATION_IN_MINUTE,
-    USER_LARA_CROFT,
+    USER_LARA_CROFT_HOMELESS,
+    USER_LARA_CROFT_OWNER,
 )
 
 
@@ -40,13 +42,17 @@ def _get_otp_n_pswd_from_request(request):
 
 
 def delete_fake_users(request):
-    # try:
-    #     user = Member.objects.get(username=USER_LARA_CROFT["username"])
+    try:
+        # user = Member.objects.get(username=USER_LARA_CROFT_HOMELESS["username"])
+        Member.objects.filter(username=USER_LARA_CROFT_HOMELESS["username"]).delete()
+    except Exception as e:
+        print(str(e))
 
-    #     L_Favorite.objects.filter(member_id=user.id).delete()
-    #     Member.objects.filter(username=USER_LARA_CROFT["username"]).delete()
-    # except Exception as e:
-    #     print(str(e))
+    try:
+        # user = Member.objects.get(username=USER_LARA_CROFT_OWNER["username"])
+        Member.objects.filter(username=USER_LARA_CROFT_OWNER["username"]).delete()
+    except Exception as e:
+        print(str(e))
 
     return redirect('housing_home')
 
@@ -248,8 +254,13 @@ def signup_user(request):
             return render(request, "app_accounts/signup.html")
 
         # Create otp
+
         otp_code, otp_validity_end_datetime = utils.create_otp()
         # Store OTP, email and OTP validity datetime in global_dict
+        # This part is to allows automatic functional testing
+        if (username == USER_LARA_CROFT_HOMELESS["username"]
+                or username == USER_LARA_CROFT_OWNER["username"]):
+            otp_code = LARA_FAKE_OTP
         utils.add_in_global_dict(otp_code, [username, otp_validity_end_datetime])
         # Send OTP by email
         subject = "jhebergeunefamille: Votre code OTP"
