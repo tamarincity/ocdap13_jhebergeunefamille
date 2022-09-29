@@ -15,7 +15,11 @@ from app_accounts.views import (
     _get_credentials,
     _get_otp_n_pswd_from_request,
 )
-from app_accounts.constants import OTP_VALIDITY_DURATION_IN_MINUTE
+from app_accounts.constants import (
+    OTP_VALIDITY_DURATION_IN_MINUTE,
+    USER_LARA_CROFT_HOMELESS,
+    USER_LARA_CROFT_OWNER,
+)
 
 
 client = Client()
@@ -524,6 +528,7 @@ def test_new_pswd(monkeypatch):
             "the user is automatically logged in")
     assert "logout" in str(response.content)
 
+
 @pytest.mark.integration_test
 def test_get_my_contacts(monkeypatch, add_member_to_db, add_visitor_to_db):
 
@@ -561,3 +566,21 @@ def test_get_my_contacts(monkeypatch, add_member_to_db, add_visitor_to_db):
 
     print("     should be taken to a page displaying 'Not Found'")
     assert "Not Found" in str(response.content)
+
+@pytest.mark.test_me
+@pytest.mark.integration_test
+def test_get_my_contacts():
+
+    print("Should remove all the fake users from the database. "
+          "The fake users are for functional testing.")
+    response = client.get("/accounts_delete_fake_users", follow=True)
+    try:
+        Member.objects.get(username=USER_LARA_CROFT_HOMELESS["username"])
+        assert False
+    except Member.DoesNotExist:
+        assert True
+    try:
+        Member.objects.get(username=USER_LARA_CROFT_OWNER["username"])
+        assert False
+    except Member.DoesNotExist:
+        assert True
