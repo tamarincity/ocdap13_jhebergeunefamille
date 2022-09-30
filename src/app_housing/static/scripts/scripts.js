@@ -18,3 +18,26 @@ function closeModalConfirmRemoveHouse() {
 function removeHouse(url) {
     window.location.href = url;
 }
+
+function showMessageField(suffix) {
+    let button = document.getElementById(`toggle-button_${suffix}`);
+    button.style.display = "none"
+
+    let form = document.getElementById(`send-message-to-host_${suffix}`)
+    form.style.display = "block"
+
+    let btnCancel = document.getElementById(`btn-cancel_${suffix}`)
+    btnCancel.classList = "btn btn-danger"
+    btnCancel.style.display = "block"
+}
+
+function cancelMessage(suffix) {
+    let button = document.getElementById(`toggle-button_${suffix}`);
+    button.style.display = "block"
+
+    let form = document.getElementById(`send-message-to-host_${suffix}`)
+    form.style.display = "none"
+
+    let btnCancel = document.getElementById(`btn-cancel_${suffix}`)
+    btnCancel.style.display = "none"
+}
