@@ -22,7 +22,7 @@ import boto3
 env = environ.Env(DEBUG=(bool, False))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent  # 3x .parent !!!
 
 # Take environment variables from .env file
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
@@ -105,7 +105,8 @@ ROOT_URLCONF = "jhebergeunefamille.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        'DIRS': [BASE_DIR / "templates"],  # <- Avoid TemplateDoesNotExist
+        # "DIRS" allows to find "templates" folders that are out of "apps" folders
+        'DIRS': [BASE_DIR / "templates"],  # <- To find templates folder which is at the root
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
